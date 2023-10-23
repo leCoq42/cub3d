@@ -26,10 +26,10 @@ LIBFT		:= ./libs/libft_ext
 LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthread
 
 #DIRS AND FILES
-INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/include
+INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 
 SRC_DIR		:=	./src
-SRC			:=	
+SRC			:=	main.c
 
 OBJ_DIR		:=	./obj
 OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
@@ -55,23 +55,28 @@ fsan:
 resan: fclean fsanitize
 
 libs-update:
+	@$(MAKE) fclean -C $(LIBFT)
+	@rm -rf $(LIBMLX)/build/
 	git submodule update --init --recursive
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@make -j -C $(LIBFT) OPTIM=1
 
 libmlx:
+	git submodule update --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 # @cmake $(LIBMLX) -B $(LIBMLX)/build && make -C $(LIBMLX)/build -j
 
 libft:
 	git submodule update --init --recursive
-	@make -j -C $(LIBFT)
+	@make -j -C $(LIBFT) OPTIM=1
 
 clean:
 	@$(RM) $(OBJ_DIR)
 	@$(MAKE) clean -C $(LIBFT)
-	@rm -rf $(LIBMLX)/build/
 
 fclean: clean
 	@$(RM) $(NAME)
+	@rm -rf $(LIBMLX)/build/
 	@$(MAKE) fclean -C $(LIBFT)
 
 re: clean all
