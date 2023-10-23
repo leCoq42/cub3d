@@ -1,3 +1,6 @@
-[submodule "libft_ext"]
+[submodule "libs/libft_ext"]
 	path = libft_ext
 	url = git@github.com:leCoq42/libft_ext.git
+[submodule "libs/MLX42"]
+	path = libs/MLX42
+	url = git@github.com:codam-coding-college/MLX42.git

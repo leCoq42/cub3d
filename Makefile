@@ -24,7 +24,7 @@ AR := ar -crs
 LIBMLX		:= ./libs/MLX42
 LIBFT		:= ./libs/libft_ext
 # LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -L"/Users/$(USER)/homebrew/Cellar/glfw/3.3.8/lib/"
-LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm
+LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthread
 
 #DIRS AND FILES
 INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/include
@@ -55,11 +55,15 @@ fsan:
 
 resan: fclean fsanitize
 
+libs-update:
+	git submodule update --init --recursive
+
 libmlx:
-		@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 # @cmake $(LIBMLX) -B $(LIBMLX)/build && make -C $(LIBMLX)/build -j
 
 libft:
+	git submodule update --init --recursive
 	@make -j -C $(LIBFT)
 
 clean:
@@ -84,4 +88,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 #&& printf "Compiling: $(notdir $<)\n"
 
 #OTHER:
-.PHONY:	all, clean, fclean, re, libmlx
+.PHONY:	all, re, optim, reoptim, debug, rebug, fsan, resan, libs-update, libmlx, clean, fclean
