@@ -23,7 +23,6 @@ AR := ar -crs
 #DEPENDENCIES:
 LIBMLX		:= ./libs/MLX42
 LIBFT		:= ./libs/libft_ext
-# LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -L"/Users/$(USER)/homebrew/Cellar/glfw/3.3.8/lib/"
 LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthread
 
 #DIRS AND FILES
@@ -36,7 +35,7 @@ OBJ_DIR		:=	./obj
 OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
 
 #RECIPES:
-all: libmlx libft $(NAME)
+all: $(NAME)
 
 optim:
 	@$(MAKE) OPTIM=1 all

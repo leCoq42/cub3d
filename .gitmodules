@@ -1,5 +1,5 @@
 [submodule "libs/libft_ext"]
-	path = libft_ext
+	path = libs/libft_ext
 	url = git@github.com:leCoq42/libft_ext.git
 [submodule "libs/MLX42"]
 	path = libs/MLX42
