@@ -1,0 +1,3 @@
+[submodule "libft_ext"]
+	path = libft_ext
+	url = git@github.com:leCoq42/libft_ext.git
