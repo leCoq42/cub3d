@@ -1,54 +1,16 @@
 #include "MLX42.h"
-#include <cub3d.h>
-#include <stdint.h>
-#include <stdio.h>
-
-#define mapWidth 24
-#define mapHeight 24
-
-void	cub3d_draw_image(mlx_image_t *img, int32_t mapwidth, int32_t mapheight, int32_t color);
-t_point	init_point(int x, int y, int z, uint32_t c);
-
-int worldMap[mapWidth][mapHeight] =
-{
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
+#include "cub3d.h"
 
 int main(int argc, char **argv)
 {
 	(void)argc, (void)argv;
+	t_cub3d	*cub3d;
 
-	mlx_t *mlx = mlx_init(screenWidth, screenHeight, "cub3D", true);
-	if (!mlx)
+	cub3d = init_cub3d();
+	if (!cub3d)
 		exit(1);
-	mlx_image_t *img = mlx_new_image(mlx, screenWidth, screenHeight);
-	if (!img)
-		exit(1);
-	cub3d_draw_image(img, mapWidth, mapHeight, 0x00000000);
-	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
+	cub3d_draw_image(cub3d, screenWidth, screenHeight);
+	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
 		exit(1);
 
 	// double time = 0; //time of current frame
@@ -66,28 +28,34 @@ int main(int argc, char **argv)
 	// double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
 	// double rotSpeed = frameTime * 3.0; //the constant value is in radians/second
 	// readKeys();
-
-	mlx_loop(mlx);
+	//
+	user_controls(cub3d);
+	mlx_loop(cub3d->mlx);
 	exit(EXIT_SUCCESS);
 }
 
 
-void	cub3d_draw_image(mlx_image_t *img, int32_t w, int32_t h, int32_t color)
+void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 {
-	static double posX = 22, posY = 12;  //x and y start position
-	static double dirX = -1, dirY = 0; //initial direction vector
-	static double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+	t_player	player;
+	mlx_image_t	*img;
+	int32_t		bg_color;
 
+	player = cub3d->player;
+	img = cub3d->img;
+	bg_color = cub3d->bg_color;
+
+	ft_memset(img->pixels, bg_color, screenHeight * screenWidth * sizeof(int32_t));
 	for(int x = 0; x < w; x++)
 	{
 		//calculate ray position and direction
 		double cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
-		double rayDirX = dirX + planeX * cameraX;
-		double rayDirY = dirY + planeY * cameraX;
+		double rayDirX = player.x_dir + player.x_plane * cameraX;
+		double rayDirY = player.y_dir + player.y_plane * cameraX;
 
 		//which box of the map we're in
-		int mapX = (int)posX;
-		int mapY = (int)posY;
+		int mapX = (int)player.x_pos;
+		int mapY = (int)player.y_pos;
 
 		//length of ray from current position to next x or y-side
 		double sideDistX;
@@ -104,9 +72,8 @@ void	cub3d_draw_image(mlx_image_t *img, int32_t w, int32_t h, int32_t color)
 		//stepping further below works. So the values can be computed as below.
 		// Division through zero is prevented, even though technically that's not
 		// needed in C++ with IEEE 754 floating point values.
-		double deltaDistX = (rayDirX == 0) ? 1e30 : abs((int)(1 / rayDirX));
-		double deltaDistY = (rayDirY == 0) ? 1e30 : abs((int)(1 / rayDirY));
-
+		double deltaDistX = (rayDirX == 0) ? 1e30 : fabs(1 / rayDirX);
+		double deltaDistY = (rayDirY == 0) ? 1e30 : fabs(1 / rayDirY);
 		double perpWallDist;
 
 		//what direction to step in x or y-direction (either +1 or -1)
@@ -115,27 +82,27 @@ void	cub3d_draw_image(mlx_image_t *img, int32_t w, int32_t h, int32_t color)
 
 		int hit = 0; //was there a wall hit?
 		int side; //was a NS or a EW wall hit?
-		//
+		
 		//calculate step and initial sideDist
 		if(rayDirX < 0)
 		{
 			stepX = -1;
-			sideDistX = (posX - mapX) * deltaDistX;
+			sideDistX = (player.x_pos - mapX) * deltaDistX;
 		}
 		else
 		{
 			stepX = 1;
-			sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+			sideDistX = (mapX + 1.0 - player.x_pos) * deltaDistX;
 		}
 		if(rayDirY < 0)
 		{
 			stepY = -1;
-			sideDistY = (posY - mapY) * deltaDistY;
+			sideDistY = (player.y_pos - mapY) * deltaDistY;
 		}
 		else
 		{
 			stepY = 1;
-			sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+			sideDistY = (mapY + 1.0 - player.y_pos) * deltaDistY;
 		}
 
 		//perform DDA
@@ -171,7 +138,7 @@ void	cub3d_draw_image(mlx_image_t *img, int32_t w, int32_t h, int32_t color)
 			perpWallDist = (sideDistY - deltaDistY);
 
 		//Calculate height of line to draw on screen
-		int lineHeight = h / perpWallDist;
+		int lineHeight = (int)(h / perpWallDist);
 
 		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart = -lineHeight / 2 + h / 2;
@@ -181,103 +148,37 @@ void	cub3d_draw_image(mlx_image_t *img, int32_t w, int32_t h, int32_t color)
 		if (drawEnd >= h)
 			drawEnd = h - 1;
 
+		t_point p1 = init_point(x, drawStart, 0, 0x00000000);
+		t_point p2 = init_point(x, drawEnd, 0, 0x00000000);
+
 		//choose wall color
-		ColorRGB color;
+		uint32_t color;
 		switch(worldMap[mapX][mapY])
 		{
-			case 1:  color = RGB_Red;    break; //red
-			case 2:  color = RGB_Green;  break; //green
-			case 3:  color = RGB_Blue;   break; //blue
-			case 4:  color = RGB_White;  break; //white
-			default: color = RGB_Yellow; break; //yellow
+			case 1:  color = 0xFF0000FF;  break; //red
+			case 2:  color = 0x00FF00FF;  break; //green
+			case 3:  color = 0x0000FFFF;  break; //blue
+			case 4:  color = 0xFFFFFFFF;  break; //white
+			default: color = 0x00FFFFFF;  break; //yellow
 		}
 
 		//give x and y sides different brightness
 		if(side == 1)
 			color = color / 2;
 
-		t_point p1 = init_point(x, drawStart, c);
-		t_point p2 = init_point(x, drawEnd, c);
+		p1.c.c = color;
+		p2.c.c = color;
 
 		//draw the pixels of the stripe as a vertical line
 		// verLine(x, drawStart, drawEnd, color);
-		draw_line(img, p1, p2);
+		draw_line(cub3d, p1, p2);
 	}
 }
 
-t_point	init_point(int x, int y, int z, uint32_t c)
+void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2)
 {
-	t_point	point;
-
-	point.x = x;
-	point.y = y;
-	point.z = z;
-	point.c.c = c;
-	return (point);
-}
-
-void	draw_line(mlx_image_t *img, t_point p1, t_point p2)
-{
-	t_point	p1_p;
-	t_point	p2_p;
-
-	// p1_p = calculate_projection(p1, fdf);
-	// p2_p = calculate_projection(p2, fdf);
-	if (p1_p.x >= 0 && p1_p.x < (int)img->width && \
-		p2_p.x >= 0 && p2_p.x < (int)img->width)
-	{
-		if (p1_p.y >= 0 && p1_p.y < (int)img->height && \
-			p2_p.y >= 0 && p2_p.y < (int)img->height)
-		{
-			if (fdf->camera.pretty > 0)
-				wu_line(fdf, p1_p, p2_p);
-			else
-				bresenham_line(fdf, p1_p, p2_p);
-		}
-	}
-}
-
-void	player_movement(void *param)
-{
-	t_cub3d	*cub3d;
-
-	cub3d = (t_cub3d *)param;
-
-	//move forward if no wall in front of you
-	if(keyDown(SDLK_UP))
-	{
-		if(worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
-		if(worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
-	}
-
-	//move backwards if no wall behind you
-	if(keyDown(SDLK_DOWN))
-	{
-		if(worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
-		if(worldMap[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
-	}
-
-	//rotate to the right
-	if(keyDown(SDLK_RIGHT))
-	{
-		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
-		dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
-		planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
-	}
-
-	//rotate to the left
-	if(keyDown(SDLK_LEFT))
-	{
-		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
-		dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
-		planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
-	}
+	if (cub3d->wu)
+		wu_line(cub3d, p1, p2);
+	else
+		bresenham_line(cub3d, p1, p2);
 }

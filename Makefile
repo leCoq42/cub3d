@@ -7,7 +7,7 @@ CFLAGS ?= -Wall -Wextra -Werror
 
 
 ifdef OPTIM
-	CFLAGS += -Ofast -flto -march=native
+	CFLAGS += -Ofast -march=native #-flto
 endif
 
 ifdef DEBUG
@@ -31,7 +31,7 @@ INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 SRC_DIR		:=	./src
 OBJ_DIR		:=	./obj
 
-SRC			:=	main.c
+SRC			:=	test.c bresenham.c move.c init.c wu_line.c
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
 ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
@@ -45,26 +45,24 @@ all: $(ODIR) $(NAME)
 optim:
 	@$(MAKE) OPTIM=1 all
 
-reoptim:
-	@$(MAKE) fclean
-	$(MAKE) optim
+reoptim: clean optim
 
 debug:
 	$(MAKE) DEBUG=1
 
-rebug: fclean debug
+rebug: clean debug
 
 fsan:
 	$(MAKE) FSAN=1
 
-resan: fclean fsanitize
+resan: clean fsanitize
 
 libs-update:
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
 	git submodule update --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@make -j -C $(LIBFT) OPTIM=1
+	@make -j -C $(LIBFT) #OPTIM=1
 
 libmlx:
 	git submodule update --init --recursive
@@ -73,7 +71,7 @@ libmlx:
 
 libft:
 	git submodule update --init --recursive
-	@make -j -C $(LIBFT) OPTIM=1
+	@make -j -C $(LIBFT) #OPTIM=1
 
 clean:
 	@$(RM) $(OBJ_DIR)
