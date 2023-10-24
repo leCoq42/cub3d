@@ -29,13 +29,18 @@ LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthrea
 INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 
 SRC_DIR		:=	./src
+OBJ_DIR		:=	./obj
+
 SRC			:=	main.c
 
-OBJ_DIR		:=	./obj
-OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
+SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
+ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
+
+OBJS		:=	$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+# OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
 
 #RECIPES:
-all: $(NAME)
+all: $(ODIR) $(NAME)
 
 optim:
 	@$(MAKE) OPTIM=1 all
@@ -82,6 +87,9 @@ fclean: clean
 re: clean all
 
 #RULES:
+$(ODIR):
+	mkdir -p $@
+
 $(NAME): $(OBJS)
 	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm

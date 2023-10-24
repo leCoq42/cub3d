@@ -31,6 +31,7 @@ typedef struct s_point
 {
 	int32_t	x;
 	int32_t	y;
+	int32_t	z;
 	t_color	c;
 	char	type;
 }	t_point;

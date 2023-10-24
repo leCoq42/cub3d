@@ -7,8 +7,9 @@
 #define mapHeight 24
 
 void	cub3d_draw_image(mlx_image_t *img, int32_t mapwidth, int32_t mapheight, int32_t color);
+t_point	init_point(int x, int y, int z, uint32_t c);
 
-int worldMap[mapWidth][mapHeight]=
+int worldMap[mapWidth][mapHeight] =
 {
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -46,39 +47,33 @@ int main(int argc, char **argv)
 	mlx_image_t *img = mlx_new_image(mlx, screenWidth, screenHeight);
 	if (!img)
 		exit(1);
-
-	double time = 0; //time of current frame
-	double oldTime = 0; //time of previous frame
-
 	cub3d_draw_image(img, mapWidth, mapHeight, 0x00000000);
 	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
 		exit(1);
 
+	// double time = 0; //time of current frame
+	// double oldTime = 0; //time of previous frame
 	// screen(screenWidth, screenHeight, 0, "Raycaster");
 	//timing for input and FPS counter
-	oldTime = time;
-	time = getTicks();
-	double frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
-	printf("%f\n", 1.0 / frameTime); //FPS counter
+	// oldTime = time;
+	// time = getTicks();
+	// double frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
+	// printf("%f\n", 1.0 / frameTime); //FPS counter
 	// redraw();
 	// cls();
 
 	//speed modifiers
-	double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
-	double rotSpeed = frameTime * 3.0; //the constant value is in radians/second
+	// double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
+	// double rotSpeed = frameTime * 3.0; //the constant value is in radians/second
 	// readKeys();
 
-		
 	mlx_loop(mlx);
 	exit(EXIT_SUCCESS);
 }
 
 
-void	cub3d_draw_image(mlx_image_t *img, int32_t mapwidth, int32_t mapheight, int32_t color)
+void	cub3d_draw_image(mlx_image_t *img, int32_t w, int32_t h, int32_t color)
 {
-	double	w;
-	int		h;
-
 	static double posX = 22, posY = 12;  //x and y start position
 	static double dirX = -1, dirY = 0; //initial direction vector
 	static double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
@@ -86,7 +81,7 @@ void	cub3d_draw_image(mlx_image_t *img, int32_t mapwidth, int32_t mapheight, int
 	for(int x = 0; x < w; x++)
 	{
 		//calculate ray position and direction
-		double cameraX = 2 * x / w - 1; //x-coordinate in camera space
+		double cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
 		double rayDirX = dirX + planeX * cameraX;
 		double rayDirY = dirY + planeY * cameraX;
 
@@ -201,8 +196,44 @@ void	cub3d_draw_image(mlx_image_t *img, int32_t mapwidth, int32_t mapheight, int
 		if(side == 1)
 			color = color / 2;
 
+		t_point p1 = init_point(x, drawStart, c);
+		t_point p2 = init_point(x, drawEnd, c);
+
 		//draw the pixels of the stripe as a vertical line
-		verLine(x, drawStart, drawEnd, color);
+		// verLine(x, drawStart, drawEnd, color);
+		draw_line(img, p1, p2);
+	}
+}
+
+t_point	init_point(int x, int y, int z, uint32_t c)
+{
+	t_point	point;
+
+	point.x = x;
+	point.y = y;
+	point.z = z;
+	point.c.c = c;
+	return (point);
+}
+
+void	draw_line(mlx_image_t *img, t_point p1, t_point p2)
+{
+	t_point	p1_p;
+	t_point	p2_p;
+
+	// p1_p = calculate_projection(p1, fdf);
+	// p2_p = calculate_projection(p2, fdf);
+	if (p1_p.x >= 0 && p1_p.x < (int)img->width && \
+		p2_p.x >= 0 && p2_p.x < (int)img->width)
+	{
+		if (p1_p.y >= 0 && p1_p.y < (int)img->height && \
+			p2_p.y >= 0 && p2_p.y < (int)img->height)
+		{
+			if (fdf->camera.pretty > 0)
+				wu_line(fdf, p1_p, p2_p);
+			else
+				bresenham_line(fdf, p1_p, p2_p);
+		}
 	}
 }
 
