@@ -29,7 +29,11 @@ LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthrea
 INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/include
 
 SRC_DIR		:=	./src
-SRC			:=	
+SRC			:=	main.c \
+				parsing/file_to_llist.c \
+				parsing/llist_to_arr.c \
+				parsing/map_check.c \
+				parsing/parse.c \
 
 OBJ_DIR		:=	./obj
 OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
