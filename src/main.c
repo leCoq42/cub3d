@@ -2,13 +2,13 @@
 
 int	main(int argc, char **argv)
 {
-	t_map	*map;
+	t_cub3d	*cub3d;
 
 	if (argc != 2)
 		exit(0);
-	map = parse_map(argv[1]);
+	cub3d = parse_file(argv[1]);
 	// mlx_start(map);
 	// clean_up_arr(map->points, map);
-	free(map);
+	free(cub3d);
 	return (0);
 }

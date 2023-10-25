@@ -5,7 +5,6 @@ RM := /bin/rm -rf
 #COMPILATION VARIABLES
 CFLAGS ?= -Wall -Wextra -Werror
 
-
 ifdef OPTIM
 	CFLAGS += -Ofast -flto -march=native
 endif
@@ -28,22 +27,25 @@ LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthrea
 #DIRS AND FILES
 INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 
-SRC_DIR		:=	./src
+MAIN		:=	src/main.c
+SRC_DIR		:=	src
 SRC			:=	main.c \
-				parsing/file_to_llist.c \
-				parsing/llist_to_arr.c \
-				parsing/map_check.c \
 				parsing/parse.c \
+				parsing/parse_header.c \
+				parsing/parsing_utils.c \
+				parsing/color.c \
+				parsing/texture.c \
+				parsing/parse_map.c \
+				parsing/get_map_info.c \
 
 OBJ_DIR		:=	./obj
-
-SRC			:=	main.c
+MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
-ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
+# ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
+ODIR 		:= $(sort $(subst src,./,$(dir $(SRC:%=$(OBJ_DIR)/%))))
 
 OBJS		:=	$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-# OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
 
 #RECIPES:
 all: $(ODIR) $(NAME)
@@ -70,7 +72,8 @@ libs-update:
 	@rm -rf $(LIBMLX)/build/
 	git submodule update --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@make -j -C $(LIBFT) OPTIM=1
+	@make -j -C $(LIBFT) 
+#OPTIM=1
 
 libmlx:
 	git submodule update --init --recursive
@@ -79,7 +82,8 @@ libmlx:
 
 libft:
 	git submodule update --init --recursive
-	@make -j -C $(LIBFT) OPTIM=1
+	@make -j -C $(LIBFT)
+# OPTIM=1
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -96,13 +100,15 @@ re: clean all
 $(ODIR):
 	mkdir -p $@
 
-$(NAME): $(OBJS)
-	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
-# @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
+$(MAIN_OBJ): $(MAIN)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
+
+$(NAME): $(OBJS) $(MAIN_OBJ)
+	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+# @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 #&& printf "Compiling: $(notdir $<)\n"
 
 #OTHER:
