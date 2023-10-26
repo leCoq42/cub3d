@@ -4,16 +4,16 @@
 // void	draw_pix(t_cub3d *cub3d, t_color c, t_line line, int steep);
 // void	ft_swap(int *a, int *b);
 
-
 float	fpart(float x);
 int		ipart(float x);
+
 /* Xiaolin Wu's line drawing algorithm */
 void	wu_line(t_cub3d *cub3d, t_point p1, t_point p2)
 {
-	float dx = p2.x - p1.x;
-	float dy = p2.y - p1.y;
-	float gradient = dy / dx;
-		t_color pixelColor;
+	float	dx = p2.x - p1.x;
+	float	dy = p2.y - p1.y;
+	float	gradient = dy / dx;
+	t_color	p_color;
 
 	float error = 0.0f;
 	for (int x = p1.x; x <= p2.x; x++)
@@ -25,10 +25,10 @@ void	wu_line(t_cub3d *cub3d, t_point p1, t_point p2)
 		float subpixelIntensity = fpart(error);
 
 		// Perform anti-aliasing by gradually blending the intensity values of subpixels
-		pixelColor.c = (uint32_t)(p1.c.c * intensity + (p1.c.c * subpixelIntensity));
+		p_color.c = (uint32_t)(p1.c.c * intensity + (p1.c.c * subpixelIntensity));
 
 		// Draw the pixel
-		cub3d_put_pixel(cub3d->img, x, y, pixelColor);
+		cub3d_put_pixel(cub3d->img, x, y, p_color);
 	}
 }
 
