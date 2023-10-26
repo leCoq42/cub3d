@@ -13,10 +13,7 @@ t_cub3d *parse_file(char *filename)
 		exit(EXIT_FAILURE);
 	if (!parse_header(fd, cub3d))
 		return (NULL);
-	parse_map(cub3d);
+	if (!parse_map(cub3d))
+		return (NULL);
 	return(cub3d);
-	// file_to_llist(fd, map);
-	// llist_to_arr(map);
-	// close(fd);
-	// return(map);
 }

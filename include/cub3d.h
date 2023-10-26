@@ -90,22 +90,13 @@ bool			check_path(t_cub3d *cub3d, char identifier, char *tex_path);
 // 				PARSE_MAP
 bool			parse_map(t_cub3d *cub3d);
 bool			validate_values(char *str);
-int 			flood_fill(t_cub3d *cub3d, char **arr, size_t pos_x, size_t pos_y, char color);
+int				flood_fill(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar, char rep);
 
 
 // 				GET_MAP_INFO
 bool			get_dimensions(char **arr, t_cub3d *cub3d);
 // bool 			find_start_pos(char **arr, t_cub3d *cub3d);
 
-// // 				FILE_TO_LLIST
-// void			file_to_llist(int fd, t_map *map);
-// t_node			*add_node(char *line, t_map *map, t_node *prev_node);
-// t_node			*list_add_back(t_node **llist, t_node *new_node, t_node *prev_node);
-
-// // 				LLIST_TO_ARR
-// void			llist_to_arr(t_map *map);
-// t_node 			*fill_row(char *row, t_node *curr, t_map *map);
-// int				ft_isspace(int c);
 
 #define screenWidth 1080
 #define screenHeight 720
