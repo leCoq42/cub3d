@@ -15,10 +15,10 @@ void	bresenham_line(t_cub3d *cub3d, t_point p1, t_point p2)
 	cur = p1;
 	while (cur.x != p2.x || cur.y != p2.y)
 	{
-		cub3d_put_pixel(cub3d->img, cur.x, cur.y, cur.c);
+		cub3d_put_pixel(cub3d->img, cur.x, cur.y, get_color(cub3d, cur.x, cur.y));
 		calc_step(err, &cur, &delta, &sign);
 	}
-	cub3d_put_pixel(cub3d->img, cur.x, cur.y, cur.c);
+	cub3d_put_pixel(cub3d->img, cur.x, cur.y, get_color(cub3d, cur.x , cur.y));
 }
 
 void	calc_step(int *err, t_point *p, t_point *delta, t_point *s)
@@ -43,11 +43,3 @@ int	get_sign(int i, int j)
 	return (-1);
 }
 
-void	cub3d_put_pixel(mlx_image_t *img, int x, int y, t_color c)
-{
-	if (x < 0 || x >= (int)(img->width))
-		return ;
-	if (y < 0 || y >= (int)(img->height))
-		return ;
-	mlx_put_pixel(img, x, y, c.c);
-}
