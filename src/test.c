@@ -2,6 +2,34 @@
 #include "cub3d.h"
 #include <stdint.h>
 
+static int worldMap[mapWidth][mapHeight]=
+{
+  {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
+  {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
+  {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+  {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+  {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
+  {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
+  {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
+  {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
+  {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
+  {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
+  {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
+  {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
+  {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
+  {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
+  {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
+  {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
+  {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
+  {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
+  {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
+  {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
+};
+
 int main(int argc, char **argv)
 {
 	(void)	argc;
@@ -160,31 +188,24 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		double texPos = (drawStart - pitch - h / 2 + lineHeight / 2) * step;
 		for (int y = drawStart; y < drawEnd; y++)
 		{
+			t_color color;
 			// Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
 			int texY = (int)texPos & (texHeight - 1);
 			texPos += step;
-			uint8_t r = cub3d->textures[texNum]->pixels[( texWidth * texY + texX )];
-			cub3d->img->pixels[(y * w) + x] = r;
-			uint8_t g = cub3d->textures[texNum]->pixels[( texWidth * texY + texX + 1 )];
-			cub3d->img->pixels[(y * w) + x + 1] = g;
-			uint8_t b = cub3d->textures[texNum]->pixels[( texWidth * texY + texX + 2 )];
-			cub3d->img->pixels[(y * w) + x + 2] = b;
-			uint8_t a = cub3d->textures[texNum]->pixels[( texWidth * texY + texX  + 3 )];
-			cub3d->img->pixels[(y * w) + x + 3] = a;
-			// //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
-			// if (side == 1)
-			// 	color = (color >> 1) & 8355711;
-			// cub3d->img->pixels[(y * w) + x] = color;
+			uint32_t tex_idx = (texWidth * texY + texX) * 4;
+			uint32_t img_idx = (y * w + x) * 4;
+			color.t_rgba.r = cub3d->textures[texNum]->pixels[tex_idx];
+			color.t_rgba.g = cub3d->textures[texNum]->pixels[tex_idx + 1];
+			color.t_rgba.b = cub3d->textures[texNum]->pixels[tex_idx + 2];
+			color.t_rgba.a = cub3d->textures[texNum]->pixels[tex_idx + 3];
+			// make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+			if (side == 1)
+				color.c = (color.c >> 1) & 8355711;
+			cub3d->img->pixels[img_idx] = color.t_rgba.r;
+			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
+			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
+			cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
 		}
-
-		// mlx_texture_to_image(cub3d->mlx, cub3d->textures[texNum]);
-		// drawBuffer(buffer[0]);
-		// for(int y = 0; y < h; y++)
-		// {
-		// 	for(int x = 0; x < w; x++)
-		// 		cub3d->img[y][x] = 0; //clear the buffer instead of cls()
-		// }
-
 		//draw the pixels of the stripe as a vertical line
 		draw_vert(cub3d, x, drawStart, drawEnd);
 	}

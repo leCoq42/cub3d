@@ -5,7 +5,6 @@ RM := /bin/rm -rf
 #COMPILATION VARIABLES
 CFLAGS ?= -Wall -Wextra -Werror
 
-
 ifdef OPTIM
 	CFLAGS += -Ofast -march=native #-flto
 endif
@@ -66,9 +65,9 @@ libs:
 	@$(MAKE) -j -C $(LIBFT) #optim
 
 relibs:
+	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
-	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 	@$(MAKE) -j -C $(LIBFT) #optim
 
