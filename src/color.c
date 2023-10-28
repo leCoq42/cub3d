@@ -14,15 +14,15 @@ uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 t_color	get_color(t_cub3d *cub3d, int32_t x, int32_t y)
 {
 	t_color	color;
-	int32_t	start;
+	uint32_t	start;
 
 	color.c = 0;
 	if (x < 0 || x >= (int)(cub3d->img->width))
 		return (color);
 	if (y < 0 || y >= (int)(cub3d->img->height))
 		return (color);
-	start = y * cub3d->img->width + x;
-	if (start > (int32_t)(cub3d->img->width * cub3d->img->height - 3))
+	start = (y * cub3d->img->width + x) * 4;
+	if (start > (cub3d->img->width * cub3d->img->height * 4) - 5)
 		return (color);
 	color.t_rgba.r = cub3d->img->pixels[start];
 	color.t_rgba.g = cub3d->img->pixels[start + 1];

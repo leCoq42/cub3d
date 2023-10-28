@@ -68,7 +68,6 @@ typedef struct s_cub3d
 	double			time;
 	double			oldtime;
 	uint32_t		bg_color;
-	int8_t			wu;
 }	t_cub3d;
 
 /* static int worldMap[mapWidth][mapHeight] = */
@@ -130,14 +129,6 @@ typedef struct s_cub3d
 // Function prototypes
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
 void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
-
-// bresenham.c
-void	bresenham_line(t_cub3d *cub3d, t_point p1, t_point p2);
-void	calc_step(int *err, t_point *p, t_point *delta, t_point *s);
-int		get_sign(int i, int j);
-
-// wu_line.c
-void	wu_line(t_cub3d *cub3d, t_point p1, t_point p2);
 
 // init.c
 t_cub3d	*init_cub3d(void);

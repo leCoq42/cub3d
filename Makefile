@@ -30,7 +30,7 @@ INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 SRC_DIR		:=	./src
 OBJ_DIR		:=	./obj
 
-SRC			:=	test.c bresenham.c move.c init.c wu_line.c color.c draw.c
+SRC			:=	test.c move.c init.c color.c draw.c time.c
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
 ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
@@ -62,14 +62,14 @@ resan: clean fsan
 libs:
 	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@$(MAKE) -j -C $(LIBFT) #optim
+	@$(MAKE) -j -C $(LIBFT) optim
 
 relibs:
 	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@$(MAKE) -j -C $(LIBFT) #optim
+	@$(MAKE) -j -C $(LIBFT) optim
 
 clean:
 	@$(RM) $(OBJ_DIR)

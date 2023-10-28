@@ -161,7 +161,6 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		if (drawEnd >= h)
 			drawEnd = h - 1;
 
-
 		//texturing calculations
 		int texNum = worldMap[mapX][mapY] - 1; //1 subtracted from it so that texture 0 can be used!
 
@@ -194,13 +193,13 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			texPos += step;
 			uint32_t tex_idx = (texWidth * texY + texX) * 4;
 			uint32_t img_idx = (y * w + x) * 4;
-			color.t_rgba.r = cub3d->textures[texNum]->pixels[tex_idx];
-			color.t_rgba.g = cub3d->textures[texNum]->pixels[tex_idx + 1];
-			color.t_rgba.b = cub3d->textures[texNum]->pixels[tex_idx + 2];
-			color.t_rgba.a = cub3d->textures[texNum]->pixels[tex_idx + 3];
+			color.t_rgba.r = cub3d->textures[texNum]->pixels[tex_idx + 3];
+			color.t_rgba.g = cub3d->textures[texNum]->pixels[tex_idx + 2];
+			color.t_rgba.b = cub3d->textures[texNum]->pixels[tex_idx + 1];
+			color.t_rgba.a = cub3d->textures[texNum]->pixels[tex_idx];
 			// make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
-			if (side == 1)
-				color.c = (color.c >> 1) & 8355711;
+			// if (side == 1)
+				// color.c = (color.c >> 1) & 8355711;
 			cub3d->img->pixels[img_idx] = color.t_rgba.r;
 			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
 			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
@@ -211,10 +210,3 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 	}
 }
 
-// void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2)
-// {
-// 	if (cub3d->wu)
-// 		wu_line(cub3d, p1, p2);
-// 	else
-// 		bresenham_line(cub3d, p1, p2);
-// }

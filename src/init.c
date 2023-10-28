@@ -17,7 +17,6 @@ t_cub3d	*init_cub3d(void)
 		return (NULL);
 	init_player(&cub3d->player);
 	cub3d->bg_color = 200;
-	cub3d->wu = 0;
 	init_textures(cub3d->textures);
 	return (cub3d);
 }
