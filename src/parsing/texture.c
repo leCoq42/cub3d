@@ -8,7 +8,7 @@ bool	get_texture(char *file_str, t_cub3d *cub3d, char identifier, size_t *i)
 	// printf("file_str = %s \n", &file_str[*i]);
 	skip_chars(file_str, i, " ");
 	end_tex_name = *i;
-	while (ft_isprint(file_str[end_tex_name]))
+	while (!ft_isspace(file_str[end_tex_name]))
 		end_tex_name++;
 	texture = NULL;
 	texture = ft_substr(&file_str[*i], 0, (end_tex_name - *i));
@@ -43,4 +43,10 @@ bool	check_path(t_cub3d *cub3d, char identifier, char *tex_path)
 	else
 		return (false);
 	return (true);
+}
+
+int	ft_isspace(int c)
+{
+	return (c == ' ' || c == '\t' || c == '\r' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\0');
 }

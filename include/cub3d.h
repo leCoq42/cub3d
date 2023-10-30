@@ -144,6 +144,7 @@ uint32_t		combine_rgb(int r, int g, int b);
 // 				TEXTURE
 bool			get_texture(char *file_str, t_cub3d *cub3d, char c, size_t *i);
 bool			check_path(t_cub3d *cub3d, char identifier, char *tex_path);
+int				ft_isspace(int c);
 
 // 				PARSE_MAP
 bool			parse_map(t_cub3d *cub3d);

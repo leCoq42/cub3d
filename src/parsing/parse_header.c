@@ -25,8 +25,8 @@ bool	parse_header(int fd, t_cub3d *cub3d)
 			return (perror("invalid map info\n"), false);
 		count++;
 	}
-	// printf("ceiling = %u \n", cub3d->c_col);
 	// printf("floor = %u \n", cub3d->f_col);
+	// printf("ceiling = %u \n", cub3d->c_col);
 	if (info_is_valid(cub3d, &i, file_str))
 		return (true);
 	return (false); // one of the 6 headers is not filled
