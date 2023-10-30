@@ -5,7 +5,6 @@ RM := /bin/rm -rf
 #COMPILATION VARIABLES
 CFLAGS ?= -Wall -Wextra -Werror
 
-
 ifdef OPTIM
 	CFLAGS += -Ofast -march=native #-flto
 endif
@@ -31,7 +30,7 @@ INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 SRC_DIR		:=	./src
 OBJ_DIR		:=	./obj
 
-SRC			:=	test.c bresenham.c move.c init.c wu_line.c
+SRC			:=	test.c move.c init.c color.c draw.c time.c
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
 ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
@@ -50,28 +49,27 @@ reoptim: clean optim
 debug:
 	$(MAKE) DEBUG=1
 
-rebug: clean debug
+rebug: clean
+	@rm -rf $(LIBMLX)/build/
+	cmake -DDEBUG=1 -DGLFW_FETCH=0 $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	$(MAKE) DEBUG=1
 
 fsan:
 	$(MAKE) FSAN=1
 
-resan: clean fsanitize
+resan: clean fsan
 
-libs-update:
+libs:
+	git submodule update --remote --init --recursive
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@$(MAKE) -j -C $(LIBFT) optim
+
+relibs:
+	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
-	git submodule update --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@make -j -C $(LIBFT) #OPTIM=1
-
-libmlx:
-	git submodule update --init --recursive
-	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-# @cmake $(LIBMLX) -B $(LIBMLX)/build && make -C $(LIBMLX)/build -j
-
-libft:
-	git submodule update --init --recursive
-	@make -j -C $(LIBFT) #OPTIM=1
+	@$(MAKE) -j -C $(LIBFT) optim
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -89,7 +87,7 @@ $(ODIR):
 	mkdir -p $@
 
 $(NAME): $(OBJS)
-	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+	$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c

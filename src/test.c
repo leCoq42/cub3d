@@ -1,9 +1,39 @@
 #include "MLX42.h"
 #include "cub3d.h"
+#include <stdint.h>
+
+static int worldMap[mapWidth][mapHeight]=
+{
+  {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
+  {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
+  {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+  {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+  {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
+  {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
+  {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
+  {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
+  {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
+  {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
+  {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
+  {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
+  {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
+  {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
+  {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
+  {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
+  {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
+  {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
+  {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
+  {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
+};
 
 int main(int argc, char **argv)
 {
-	(void)argc, (void)argv;
+	(void)	argc;
+	(void)	argv;
 	t_cub3d	*cub3d;
 
 	cub3d = init_cub3d();
@@ -12,28 +42,10 @@ int main(int argc, char **argv)
 	cub3d_draw_image(cub3d, screenWidth, screenHeight);
 	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
 		exit(1);
-
-	// double time = 0; //time of current frame
-	// double oldTime = 0; //time of previous frame
-	// screen(screenWidth, screenHeight, 0, "Raycaster");
-	//timing for input and FPS counter
-	// oldTime = time;
-	// time = getTicks();
-	// double frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
-	// printf("%f\n", 1.0 / frameTime); //FPS counter
-	// redraw();
-	// cls();
-
-	//speed modifiers
-	// double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
-	// double rotSpeed = frameTime * 3.0; //the constant value is in radians/second
-	// readKeys();
-	//
 	user_controls(cub3d);
 	mlx_loop(cub3d->mlx);
 	exit(EXIT_SUCCESS);
 }
-
 
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 {
@@ -45,7 +57,82 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 	img = cub3d->img;
 	bg_color = cub3d->bg_color;
 
-	ft_memset(img->pixels, bg_color, screenHeight * screenWidth * sizeof(int32_t));
+	ft_memset(img->pixels, bg_color, w * h * 4);
+
+	//FLOOR CASTING
+	for(int y = 0; y < h; y++)
+	{
+		// rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
+		float rayDirX0 = player.x_dir - player.x_plane;
+		float rayDirY0 = player.y_dir - player.y_plane;
+		float rayDirX1 = player.x_dir + player.x_plane;
+		float rayDirY1 = player.y_dir + player.y_plane;
+
+		// Current y position compared to the center of the screen (the horizon)
+		int p = y - h / 2;
+
+		// Vertical position of the camera.
+		float posZ = 0.5 * h;
+
+		// Horizontal distance from the camera to the floor for the current row.
+		// 0.5 is the z position exactly in the middle between floor and ceiling.
+		float rowDistance = posZ / p;
+
+		// calculate the real world step vector we have to add for each x (parallel to camera plane)
+		// adding step by step avoids multiplications with a weight in the inner loop
+		float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / w;
+		float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / w;
+
+		// real world coordinates of the leftmost column. This will be updated as we step to the right.
+		float floorX = player.x_pos + rowDistance * rayDirX0;
+		float floorY = player.y_pos + rowDistance * rayDirY0;
+
+		for(int x = 0; x < w; ++x)
+		{
+			// the cell coord is simply got from the integer parts of floorX and floorY
+			int cellX = (int)(floorX);
+			int cellY = (int)(floorY);
+
+			// get the texture coordinate from the fractional part
+			int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+			int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+			floorX += floorStepX;
+			floorY += floorStepY;
+
+			// choose texture and draw the pixel
+			int floorTexture = 3;
+			int ceilingTexture = 6;
+			t_color color;
+
+			// floor
+			uint32_t tex_idx = (texWidth * ty + tx) * 4;
+			uint32_t img_idx = (y * w + x) * 4;
+			color.t_rgba.a = cub3d->textures[floorTexture]->pixels[tex_idx];
+			color.t_rgba.b = cub3d->textures[floorTexture]->pixels[tex_idx + 1];
+			color.t_rgba.g = cub3d->textures[floorTexture]->pixels[tex_idx + 2];
+			color.t_rgba.r = cub3d->textures[floorTexture]->pixels[tex_idx + 3];
+			color.c = (color.c >> 1) & 8355711; // make a bit darker
+			cub3d->img->pixels[img_idx] = color.t_rgba.r;
+			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
+			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
+			cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
+
+			//ceiling (symmetrical, at screenHeight - y - 1 instead of y)
+			color.t_rgba.a = cub3d->textures[ceilingTexture]->pixels[tex_idx];
+			color.t_rgba.b = cub3d->textures[ceilingTexture]->pixels[tex_idx + 1];
+			color.t_rgba.g = cub3d->textures[ceilingTexture]->pixels[tex_idx + 2];
+			color.t_rgba.r = cub3d->textures[ceilingTexture]->pixels[tex_idx + 3];
+			color.c = (color.c >> 1) & 8355711; // make a bit darker
+			img_idx = ((h - y - 1) * w + x) * 4;
+			cub3d->img->pixels[img_idx] = color.t_rgba.r;
+			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
+			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
+			cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
+		}
+	}
+
+	//WALL CASTING
 	for(int x = 0; x < w; x++)
 	{
 		//calculate ray position and direction
@@ -74,7 +161,6 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		// needed in C++ with IEEE 754 floating point values.
 		double deltaDistX = (rayDirX == 0) ? 1e30 : fabs(1 / rayDirX);
 		double deltaDistY = (rayDirY == 0) ? 1e30 : fabs(1 / rayDirY);
-		double perpWallDist;
 
 		//what direction to step in x or y-direction (either +1 or -1)
 		int stepX;
@@ -132,6 +218,7 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		//for size == 1, but can be simplified to the code below thanks to how sideDist and deltaDist are computed:
 		//because they were left scaled to |rayDir|. sideDist is the entire length of the ray above after the multiple
 		//steps, but we subtract deltaDist once because one step more into the wall was taken above.
+		double perpWallDist;
 		if (side == 0)
 			perpWallDist = (sideDistX - deltaDistX);
 		else
@@ -140,45 +227,61 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		//Calculate height of line to draw on screen
 		int lineHeight = (int)(h / perpWallDist);
 
+		int pitch = 100;
 		//calculate lowest and highest pixel to fill in current stripe
-		int drawStart = -lineHeight / 2 + h / 2;
+		int drawStart = -lineHeight / 2 + h / 2 + pitch;
 		if (drawStart < 0)
 			drawStart = 0;
-		int drawEnd = lineHeight / 2 + h / 2;
+		int drawEnd = lineHeight / 2 + h / 2 + pitch;
 		if (drawEnd >= h)
 			drawEnd = h - 1;
 
-		t_point p1 = init_point(x, drawStart, 0, 0x00000000);
-		t_point p2 = init_point(x, drawEnd, 0, 0x00000000);
+		//texturing calculations
+		int texNum = worldMap[mapX][mapY] - 1; //1 subtracted from it so that texture 0 can be used!
 
-		//choose wall color
-		uint32_t color;
-		switch(worldMap[mapX][mapY])
+		//calculate value of wallX
+		double wallX; //where exactly the wall was hit
+		if (side == 0)
+			wallX = player.y_pos + perpWallDist * rayDirY;
+		else
+			wallX = player.x_pos + perpWallDist * rayDirX;
+		wallX -= floor(wallX);
+
+		//x coordinate on the texture
+		int texX = (int)(wallX * (double)texWidth);
+		if (side == 0 && rayDirX > 0)
+			texX = texWidth - texX - 1;
+		if (side == 1 && rayDirY < 0)
+			texX = texWidth - texX - 1;
+
+		// TODO: an integer-only bresenham or DDA like algorithm could make the texture coordinate stepping faster
+		// How much to increase the texture coordinate per screen pixel
+		double step = 1.0 * texHeight / lineHeight;
+		// Starting texture coordinate
+		// double texPos = ((double)drawStart - (double)h / 2 + (double)lineHeight / 2) * step;
+		double texPos = (drawStart - pitch - h / 2 + lineHeight / 2) * step;
+		for (int y = drawStart; y < drawEnd; y++)
 		{
-			case 1:  color = 0xFF0000FF;  break; //red
-			case 2:  color = 0x00FF00FF;  break; //green
-			case 3:  color = 0x0000FFFF;  break; //blue
-			case 4:  color = 0xFFFFFFFF;  break; //white
-			default: color = 0x00FFFFFF;  break; //yellow
+			t_color color;
+			// Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+			int texY = (int)texPos & (texHeight - 1);
+			texPos += step;
+			uint32_t tex_idx = (texWidth * texY + texX) * 4;
+			uint32_t img_idx = (y * w + x) * 4;
+			color.t_rgba.r = cub3d->textures[texNum]->pixels[tex_idx + 3];
+			color.t_rgba.g = cub3d->textures[texNum]->pixels[tex_idx + 2];
+			color.t_rgba.b = cub3d->textures[texNum]->pixels[tex_idx + 1];
+			color.t_rgba.a = cub3d->textures[texNum]->pixels[tex_idx];
+			// make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+			// if (side == 1)
+			// 	color.c = (color.c >> 1) & 8355711;
+			cub3d->img->pixels[img_idx] = color.t_rgba.r;
+			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
+			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
+			cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
 		}
-
-		//give x and y sides different brightness
-		if(side == 1)
-			color = color / 2;
-
-		p1.c.c = color;
-		p2.c.c = color;
-
 		//draw the pixels of the stripe as a vertical line
-		// verLine(x, drawStart, drawEnd, color);
-		draw_line(cub3d, p1, p2);
+		draw_vert(cub3d, x, drawStart, drawEnd);
 	}
 }
 
-void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2)
-{
-	if (cub3d->wu)
-		wu_line(cub3d, p1, p2);
-	else
-		bresenham_line(cub3d, p1, p2);
-}
