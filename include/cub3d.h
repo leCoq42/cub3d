@@ -11,7 +11,7 @@
 
 #include "MLX42.h"
 #include "libft.h"
-// #include "ft_printf.h"
+#include "ft_printf.h"
 #include "get_next_line_bonus.h"
 
 #define screenWidth 1080
@@ -146,6 +146,7 @@ int		init_textures(mlx_texture_t **textures);
 // move.c
 void	user_controls(t_cub3d *cub3d);
 void	player_move_hooks(void *param);
+void	key_hooks(mlx_key_data_t keydata, void *param);
 
 // draw.c
 void	draw_vert(t_cub3d *cub3d, int32_t x, int32_t y_start, int32_t y_end);
@@ -155,6 +156,8 @@ void	cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
 uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
 
+// time.c
+void	show_fps(t_cub3d *cub3d, bool key_press);
 
 static int worldMap[mapWidth][mapHeight]=
 {
@@ -184,29 +187,6 @@ static int worldMap[mapWidth][mapHeight]=
   {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
 };
 
-// Function prototypes
-void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
-void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
 
-// init.c
-t_cub3d	*init_cub3d(void);
-void	init_player(t_player *player);
-t_point	init_point(int x, int y, int z, uint32_t c);
-int		init_textures(mlx_texture_t **textures);
-// move.c
-void	user_controls(t_cub3d *cub3d);
-void	player_move_hooks(void *param);
-void	key_hooks(mlx_key_data_t keydata, void *param);
-
-// draw.c
-void	draw_vert(t_cub3d *cub3d, int32_t x, int32_t y_start, int32_t y_end);
-void	cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
-
-// color.c
-uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
-
-// time.c
-void	show_fps(t_cub3d *cub3d, bool key_press);
 
 #endif

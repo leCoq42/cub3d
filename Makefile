@@ -78,14 +78,14 @@ resan: clean fsan
 libs:
 	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@$(MAKE) -j -C $(LIBFT) #optim
+	@$(MAKE) -j -C $(LIBFT) optim
 
 relibs:
 	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@$(MAKE) -j -C $(LIBFT) #optim
+	@$(MAKE) -j -C $(LIBFT) optim
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -110,7 +110,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
 
 $(NAME): $(OBJS) $(MAIN_OBJ)
-	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 #&& printf "Compiling: $(notdir $<)\n"
 
