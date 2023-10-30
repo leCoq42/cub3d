@@ -36,8 +36,8 @@ bool	info_is_valid(t_cub3d *cub3d, size_t *i, char *file_str)
 {
 	if (cub3d->c_col != 0 && cub3d->f_col != 0)
 	{
-		if (cub3d->n_texture != 0 && cub3d->e_texture != 0 \
-			&& cub3d->s_texture != 0 && cub3d->w_texture != 0)
+		if (cub3d->textures[0] != 0 && cub3d->textures[1] != 0 \
+			&& cub3d->textures[2] != 0 && cub3d->textures[3] != 0)
 			{
 				skip_chars(file_str, i, "\n");
 				cub3d->map_str = &file_str[*i];
@@ -56,7 +56,7 @@ bool	extract_info(char *file_str, size_t *i, t_cub3d *cub3d)
 	{
 		c = file_str[*i];
 		(*i)++; 
-		if (!get_color(file_str, cub3d, c, i))
+		if (!get_color_header(file_str, cub3d, c, i))
 			return (false);
 	}
 	else if (is_present("NESW", file_str[*i]))
@@ -99,29 +99,3 @@ bool	is_identifier(char *str)
 		return (true);
 	return (false);
 }
-
-// static char	*strjoin(char const *s1, char const *s2)
-// {
-// 	const size_t	s1len = strlen(s1);
-// 	const size_t	s2len = strlen(s2);
-// 	char			*mem;
-
-// 	mem = (char *)malloc(s1len + s2len + 1 * sizeof(char));
-// 	if (!mem)
-// 		return (0);
-// 	ft_memcpy(mem, s1, s1len);
-// 	ft_memcpy(mem + s1len, s2, s2len + 1);
-// 	return (mem);
-// }
-
-// static size_t	strlen(const char *s)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	if (!s)
-// 		return (0);
-// 	while (s[i])
-// 		i++;
-// 	return (i);
-// }

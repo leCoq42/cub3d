@@ -38,11 +38,11 @@ SRC			:=	main.c \
 				parsing/parse_map.c \
 				parsing/get_map_info.c \
 				drawing/test.c \
-				drawing/bresenham.c \
 				drawing/move.c \
 				drawing/init.c \
-				drawing/wu_line.c
-\
+				drawing/draw.c \
+				drawing/color.c \
+				drawing/time.c \
 
 OBJ_DIR		:=	./obj
 MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
@@ -65,28 +65,27 @@ reoptim: clean optim
 debug:
 	$(MAKE) DEBUG=1
 
-rebug: clean debug
+rebug: clean
+	@rm -rf $(LIBMLX)/build/
+	cmake -DDEBUG=1 -DGLFW_FETCH=0 $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	$(MAKE) DEBUG=1
 
 fsan:
 	$(MAKE) FSAN=1
 
-resan: clean fsanitize
+resan: clean fsan
 
-libs-update:
+libs:
+	git submodule update --remote --init --recursive
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@$(MAKE) -j -C $(LIBFT) optim
+
+relibs:
+	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
-	git submodule update --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@make -j -C $(LIBFT) #OPTIM=1
-
-libmlx:
-	git submodule update --init --recursive
-	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-# @cmake $(LIBMLX) -B $(LIBMLX)/build && make -C $(LIBMLX)/build -j
-
-libft:
-	git submodule update --init --recursive
-	@make -j -C $(LIBFT) #OPTIM=1
+	@$(MAKE) -j -C $(LIBFT) optim
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -103,8 +102,9 @@ re: clean all
 $(ODIR):
 	mkdir -p $@
 
-$(MAIN_OBJ): $(MAIN)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+$(NAME): $(OBJS)
+	$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+# @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)

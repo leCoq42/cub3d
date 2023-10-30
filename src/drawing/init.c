@@ -1,3 +1,4 @@
+#include "MLX42.h"
 #include "cub3d.h"
 
 bool	init_cub3d(t_cub3d	*cub3d)
@@ -10,7 +11,7 @@ bool	init_cub3d(t_cub3d	*cub3d)
 		return (false);
 	init_player(&cub3d->player, cub3d->st_pos);
 	cub3d->bg_color = 200;
-	cub3d->wu = 0;
+	// init_textures(cub3d->textures);
 	return (cub3d);
 }
 
@@ -36,3 +37,16 @@ t_point	init_point(int x, int y, int z, uint32_t c)
 	point.c.c = c;
 	return (point);
 }
+
+// int	init_textures(mlx_texture_t **textures)
+// {
+// 	textures[0] = mlx_load_png("./textures/pics/eagle.png");
+// 	textures[1] = mlx_load_png("./textures/pics/redbrick.png");
+// 	textures[2] = mlx_load_png("./textures/pics/purplestone.png");
+// 	textures[3] = mlx_load_png("./textures/pics/greystone.png");
+// 	textures[4] = mlx_load_png("./textures/pics/bluestone.png");
+// 	textures[5] = mlx_load_png("./textures/pics/mossy.png");
+// 	textures[6] = mlx_load_png("./textures/pics/wood.png");
+// 	textures[7] = mlx_load_png("./textures/pics/colorstone.png");
+// 	return (0);
+// }

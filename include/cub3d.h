@@ -18,6 +18,8 @@
 #define screenHeight 720
 #define mapWidth 24
 #define mapHeight 24
+#define texWidth 64
+#define texHeight 64
 
 //***********************************STRUCTS***********************************
 typedef union color
@@ -41,13 +43,6 @@ typedef struct s_point
 	char	type;
 }	t_point;
 
-// typedef struct s_map
-// {
-// 	int32_t	width;
-// 	int32_t	height;
-// 	t_point	**grid;
-// }	t_map;
-
 typedef struct s_player
 {
 	double	x_pos;
@@ -58,13 +53,6 @@ typedef struct s_player
 	double	y_plane;
 }	t_player;
 
-
-typedef struct s_line
-{
-	double	grad;
-	double	intery;
-	int		x;
-}	t_line;
 typedef struct s_point_cub
 {
 	size_t	x_pos;
@@ -83,18 +71,6 @@ typedef struct s_point_cub
 // 	mlx_t					*mlx;
 // }							t_map;
 
-
-// typedef struct s_cub3d
-// {
-// 	t_player	player;
-// 	mlx_t		*mlx;
-// 	mlx_image_t	*img;
-// 	double		time;
-// 	double		oldtime;
-// 	uint32_t	bg_color;
-// 	int8_t		wu;
-// }	t_cub3d;
-
 typedef struct s_cub3d
 {
 	// t_map			*map;
@@ -110,11 +86,11 @@ typedef struct s_cub3d
 	mlx_texture_t	*e_texture;
 	mlx_texture_t	*s_texture;
 	mlx_texture_t	*w_texture;
+	mlx_texture_t	*textures[8];
 	t_player		player;
 	mlx_t			*mlx;
 	mlx_image_t		*img;
 	uint32_t		bg_color;
-	int8_t			wu;
 	double			time;
 	double			oldtime;
 }	t_cub3d;
@@ -137,7 +113,7 @@ bool			extract_info(char *str, size_t *i, t_cub3d *cub3d);
 bool			info_is_valid(t_cub3d *cub3d, size_t *i, char *file_str);
 
 // 				COLOR
-bool			get_color(char *file_str, t_cub3d *cub3d, char c, size_t *i);
+bool			get_color_header(char *file_str, t_cub3d *cub3d, char c, size_t *i);
 int				get_r_g_b(char *file_str, size_t *i);
 uint32_t		combine_rgb(int r, int g, int b);
 
@@ -155,58 +131,56 @@ bool			create_int_arr(t_cub3d *cub3d);
 
 // 				GET_MAP_INFO
 bool			get_dimensions(char **arr, t_cub3d *cub3d);
-// bool 			find_start_pos(char **arr, t_cub3d *cub3d);
-
-
-
-static int worldMap[mapWidth][mapHeight] =
-{
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
 
 // Function prototypes
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
 void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
 
-// bresenham.c
-void	bresenham_line(t_cub3d *cub3d, t_point p1, t_point p2);
-void	calc_step(int *err, t_point *p, t_point *delta, t_point *s);
-int		get_sign(int i, int j);
-void	cub3d_put_pixel(mlx_image_t *img, int x, int y, t_color c);
-
-// wu_line.c
-void	wu_line(t_cub3d *cub3d, t_point p1, t_point p2);
-
 // init.c
 bool	init_cub3d(t_cub3d	*cub3d);
 void	init_player(t_player *player, t_point_cub st_pos);
 t_point	init_point(int x, int y, int z, uint32_t c);
-
+int		init_textures(mlx_texture_t **textures);
 // move.c
 void	user_controls(t_cub3d *cub3d);
 void	player_move_hooks(void *param);
+
+// draw.c
+void	draw_vert(t_cub3d *cub3d, int32_t x, int32_t y_start, int32_t y_end);
+void	cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
+
+// color.c
+uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
+
+
+/* static int worldMap[mapWidth][mapHeight]= */
+/* { */
+/*   {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7}, */
+/*   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7}, */
+/*   {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7}, */
+/*   {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7}, */
+/*   {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7}, */
+/*   {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7}, */
+/*   {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1}, */
+/*   {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8}, */
+/*   {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1}, */
+/*   {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8}, */
+/*   {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1}, */
+/*   {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1}, */
+/*   {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6}, */
+/*   {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6}, */
+/*   {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3}, */
+/*   {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2}, */
+/*   {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2}, */
+/*   {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2}, */
+/*   {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2}, */
+/*   {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2}, */
+/*   {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2}, */
+/*   {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2}, */
+/*   {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3} */
+/* }; */
+
 
 #endif

@@ -1,6 +1,6 @@
 #include "cub3d.h"
 
-bool	get_color(char *file_str, t_cub3d *cub3d, char identifier, size_t *i)
+bool	get_color_header(char *file_str, t_cub3d *cub3d, char identifier, size_t *i)
 {
 	int		r;
 	int		g;

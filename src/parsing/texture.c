@@ -33,13 +33,17 @@ bool	check_path(t_cub3d *cub3d, char identifier, char *tex_path)
 		return (perror("invalid path to texture\n"), free(tex_path), false);
 	free(tex_path);
 	if (identifier == 'N')
-		cub3d->n_texture = texture;
+		cub3d->textures[0] = texture;
+		// cub3d->n_texture = texture;
 	else if (identifier == 'E')
-		cub3d->e_texture = texture;
+		cub3d->textures[1] = texture;
+		// cub3d->e_texture = texture;
 	else if (identifier == 'S')
-		cub3d->s_texture = texture;
+		cub3d->textures[2] = texture;
+		// cub3d->s_texture = texture;
 	else if (identifier == 'W')
-		cub3d->w_texture = texture;
+		cub3d->textures[3] = texture;
+		// cub3d->w_texture = texture;
 	else
 		return (false);
 	return (true);
