@@ -2,9 +2,10 @@
 #include "cub3d.h"
 #include <stdint.h>
 
-static void cast_floor(t_cub3d *cub3d, int32_t w, int32_t h);
+static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h);
+// static void cast_walls(t_cub3d *cub3d, int32_t w, int32_t h);
 
-static void cast_floor(t_cub3d *cub3d, int32_t w, int32_t h)
+static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h)
 {
 	t_color		color;
 	for(int y = h / 2 + 1; y < h; ++y)
@@ -28,12 +29,67 @@ static void cast_floor(t_cub3d *cub3d, int32_t w, int32_t h)
 	}
 }
 
+// static void cast_walls(t_cub3d *cub3d, int32_t w, int32_t h)
+// {
+// 	t_player	player;
+// 	mlx_image_t	*img;
+// 	int32_t		bg_color;
+
+// 	player = cub3d->player;
+// 	img = cub3d->img;
+// 	bg_color = cub3d->bg_color;
+// 	for(int x = 0; x < w; x++)
+// 	{
+// 		//calculate ray position and direction
+// 		double cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
+// 		double rayDirX = player.x_dir + player.x_plane * cameraX;
+// 		double rayDirY = player.y_dir + player.y_plane * cameraX;
+
+// 		//which box of the map we're in
+// 		int mapX = (int)player.x_pos;
+// 		int mapY = (int)player.y_pos;
+
+// 		//length of ray from current position to next x or y-side
+// 		double sideDistX;
+// 		double sideDistY;
+
+// 		double deltaDistX = (rayDirX == 0) ? 1e30 : fabs(1 / rayDirX);
+// 		double deltaDistY = (rayDirY == 0) ? 1e30 : fabs(1 / rayDirY);
+// 		//what direction to step in x or y-direction (either +1 or -1)
+// 		int stepX;
+// 		int stepY;
+
+// 		int hit = 0; //was there a wall hit?
+// 		int side; //was a NS or a EW wall hit?
+		
+// 		//calculate step and initial sideDist
+// 		if(rayDirX < 0)
+// 		{
+// 			stepX = -1;
+// 			sideDistX = (player.x_pos - mapX) * deltaDistX;
+// 		}
+// 		else
+// 		{
+// 			stepX = 1;
+// 			sideDistX = (mapX + 1.0 - player.x_pos) * deltaDistX;
+// 		}
+// 		if(rayDirY < 0)
+// 		{
+// 			stepY = -1;
+// 			sideDistY = (player.y_pos - mapY) * deltaDistY;
+// 		}
+// 		else
+// 		{
+// 			stepY = 1;
+// 			sideDistY = (mapY + 1.0 - player.y_pos) * deltaDistY;
+// 		}
+// }
+
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 {
 	t_player	player;
 	mlx_image_t	*img;
 	int32_t		bg_color;
-	// t_color		color;
 
 	player = cub3d->player;
 	img = cub3d->img;
@@ -42,26 +98,7 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 	ft_memset(img->pixels, bg_color, w * h * 4);
 
 	//FLOOR CASTING
-	cast_floor(cub3d, w, h);
-	// for(int y = h / 2 + 1; y < h; ++y)
-	// {
-	// 	for(int x = 0; x < w; ++x)
-	// 	{
-	// 		color.c = cub3d->f_col;
-	// 		uint32_t img_idx = (y * w + x) * 4;
-	// 		cub3d->img->pixels[img_idx + 3] = color.t_rgba.r;
-	// 		cub3d->img->pixels[img_idx + 2] = color.t_rgba.g;
-	// 		cub3d->img->pixels[img_idx + 1] = color.t_rgba.b;
-	// 		cub3d->img->pixels[img_idx + 0] = color.t_rgba.a;
-
-	// 		color.c = cub3d->c_col;
-	// 		img_idx = ((h - y - 1) * w + x) * 4;
-	// 		cub3d->img->pixels[img_idx + 3] = color.t_rgba.r;
-	// 		cub3d->img->pixels[img_idx + 2] = color.t_rgba.g;
-	// 		cub3d->img->pixels[img_idx + 1] = color.t_rgba.b;
-	// 		cub3d->img->pixels[img_idx + 0] = color.t_rgba.a;
-	// 	}
-	// }
+	cast_floor_and_ceiling(cub3d, w, h);
 
 	//WALL CASTING
 	for(int x = 0; x < w; x++)

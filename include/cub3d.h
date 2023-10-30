@@ -141,7 +141,6 @@ void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
 // init.c
 bool	init_cub3d(t_cub3d	*cub3d);
 void	init_player(t_player *player, t_point_cub st_pos);
-t_point	init_point(int x, int y, int z, uint32_t c);
 int		init_textures(mlx_texture_t **textures);
 // move.c
 void	user_controls(t_cub3d *cub3d);
