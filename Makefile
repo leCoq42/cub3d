@@ -6,7 +6,7 @@ RM := /bin/rm -rf
 CFLAGS ?= -Wall -Wextra -Werror
 
 ifdef OPTIM
-	CFLAGS += -Ofast -march=native #-flto
+	CFLAGS += -Ofast -march=native -flto
 endif
 
 ifdef DEBUG
@@ -62,14 +62,14 @@ resan: clean fsan
 libs:
 	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@$(MAKE) -j -C $(LIBFT) optim
+	@$(MAKE) -j -C $(LIBFT) #optim
 
 relibs:
 	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
-	@$(MAKE) -j -C $(LIBFT) optim
+	@$(MAKE) -j -C $(LIBFT) #optim
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -87,7 +87,7 @@ $(ODIR):
 	mkdir -p $@
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c

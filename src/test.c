@@ -2,34 +2,6 @@
 #include "cub3d.h"
 #include <stdint.h>
 
-static int worldMap[mapWidth][mapHeight]=
-{
-  {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
-  {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-  {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-  {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-  {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-  {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
-  {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
-  {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-  {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
-  {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-  {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
-  {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
-  {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-  {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
-  {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-  {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
-  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-  {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
-  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-  {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
-  {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-  {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
-  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-  {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
-};
-
 int main(int argc, char **argv)
 {
 	(void)	argc;
@@ -39,11 +11,12 @@ int main(int argc, char **argv)
 	cub3d = init_cub3d();
 	if (!cub3d)
 		exit(1);
-	cub3d_draw_image(cub3d, screenWidth, screenHeight);
+	cub3d_draw_image(cub3d, cub3d->mlx->width, cub3d->mlx->height);
 	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
 		exit(1);
 	user_controls(cub3d);
 	mlx_loop(cub3d->mlx);
+	mlx_terminate(cub3d->mlx);
 	exit(EXIT_SUCCESS);
 }
 
@@ -60,7 +33,8 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 	ft_memset(img->pixels, bg_color, w * h * 4);
 
 	//FLOOR CASTING
-	for(int y = 0; y < h; y++)
+	// for(int y = 0; y < h; y++)
+	for(int y = h / 2 + 1; y < h; ++y)
 	{
 		// rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
 		float rayDirX0 = player.x_dir - player.x_plane;
@@ -108,23 +82,23 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			// floor
 			uint32_t tex_idx = (texWidth * ty + tx) * 4;
 			uint32_t img_idx = (y * w + x) * 4;
-			color.t_rgba.a = cub3d->textures[floorTexture]->pixels[tex_idx];
-			color.t_rgba.b = cub3d->textures[floorTexture]->pixels[tex_idx + 1];
-			color.t_rgba.g = cub3d->textures[floorTexture]->pixels[tex_idx + 2];
-			color.t_rgba.r = cub3d->textures[floorTexture]->pixels[tex_idx + 3];
-			color.c = (color.c >> 1) & 8355711; // make a bit darker
+			color.t_rgba.a = cub3d->textures[floorTexture]->pixels[tex_idx + 3];
+			color.t_rgba.b = cub3d->textures[floorTexture]->pixels[tex_idx + 2];
+			color.t_rgba.g = cub3d->textures[floorTexture]->pixels[tex_idx + 1];
+			color.t_rgba.r = cub3d->textures[floorTexture]->pixels[tex_idx + 0];
+			// color.c = (color.c >> 1) & 8355711; // make a bit darker
 			cub3d->img->pixels[img_idx] = color.t_rgba.r;
 			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
 			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
 			cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
 
 			//ceiling (symmetrical, at screenHeight - y - 1 instead of y)
-			color.t_rgba.a = cub3d->textures[ceilingTexture]->pixels[tex_idx];
-			color.t_rgba.b = cub3d->textures[ceilingTexture]->pixels[tex_idx + 1];
-			color.t_rgba.g = cub3d->textures[ceilingTexture]->pixels[tex_idx + 2];
-			color.t_rgba.r = cub3d->textures[ceilingTexture]->pixels[tex_idx + 3];
-			color.c = (color.c >> 1) & 8355711; // make a bit darker
 			img_idx = ((h - y - 1) * w + x) * 4;
+			color.t_rgba.a = cub3d->textures[ceilingTexture]->pixels[tex_idx + 3];
+			color.t_rgba.b = cub3d->textures[ceilingTexture]->pixels[tex_idx + 2];
+			color.t_rgba.g = cub3d->textures[ceilingTexture]->pixels[tex_idx + 1];
+			color.t_rgba.r = cub3d->textures[ceilingTexture]->pixels[tex_idx + 0];
+			// color.c = (color.c >> 1) & 8355711; // make a bit darker
 			cub3d->img->pixels[img_idx] = color.t_rgba.r;
 			cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
 			cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
@@ -227,12 +201,11 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		//Calculate height of line to draw on screen
 		int lineHeight = (int)(h / perpWallDist);
 
-		int pitch = 100;
 		//calculate lowest and highest pixel to fill in current stripe
-		int drawStart = -lineHeight / 2 + h / 2 + pitch;
+		int drawStart = -lineHeight / 2 + h / 2;
 		if (drawStart < 0)
 			drawStart = 0;
-		int drawEnd = lineHeight / 2 + h / 2 + pitch;
+		int drawEnd = lineHeight / 2 + h / 2;
 		if (drawEnd >= h)
 			drawEnd = h - 1;
 
@@ -258,8 +231,8 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 		// How much to increase the texture coordinate per screen pixel
 		double step = 1.0 * texHeight / lineHeight;
 		// Starting texture coordinate
-		// double texPos = ((double)drawStart - (double)h / 2 + (double)lineHeight / 2) * step;
-		double texPos = (drawStart - pitch - h / 2 + lineHeight / 2) * step;
+		double texPos = ((double)drawStart - (double)h / 2 + (double)lineHeight / 2) * step;
+		// double texPos = (drawStart - h / 2 + lineHeight / 2) * step;
 		for (int y = drawStart; y < drawEnd; y++)
 		{
 			t_color color;
@@ -268,10 +241,10 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			texPos += step;
 			uint32_t tex_idx = (texWidth * texY + texX) * 4;
 			uint32_t img_idx = (y * w + x) * 4;
-			color.t_rgba.r = cub3d->textures[texNum]->pixels[tex_idx + 3];
-			color.t_rgba.g = cub3d->textures[texNum]->pixels[tex_idx + 2];
-			color.t_rgba.b = cub3d->textures[texNum]->pixels[tex_idx + 1];
 			color.t_rgba.a = cub3d->textures[texNum]->pixels[tex_idx];
+			color.t_rgba.b = cub3d->textures[texNum]->pixels[tex_idx + 1];
+			color.t_rgba.g = cub3d->textures[texNum]->pixels[tex_idx + 2];
+			color.t_rgba.r = cub3d->textures[texNum]->pixels[tex_idx + 3];
 			// make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
 			// if (side == 1)
 			// 	color.c = (color.c >> 1) & 8355711;
