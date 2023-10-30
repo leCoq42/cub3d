@@ -2,23 +2,24 @@
 #include "cub3d.h"
 #include <stdint.h>
 
-int main(int argc, char **argv)
-{
-	(void)	argc;
-	(void)	argv;
-	t_cub3d	*cub3d;
+// int main(int argc, char **argv)
+// {
+// 	(void)	argc;
+// 	(void)	argv;
+// 	t_cub3d	*cub3d;
 
-	cub3d = init_cub3d();
-	if (!cub3d)
-		exit(1);
-	cub3d_draw_image(cub3d, cub3d->mlx->width, cub3d->mlx->height);
-	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
-		exit(1);
-	user_controls(cub3d);
-	mlx_loop(cub3d->mlx);
-	mlx_terminate(cub3d->mlx);
-	exit(EXIT_SUCCESS);
-}
+// 	cub3d = init_cub3d();
+// 	if (!cub3d)
+// 		exit(1);
+// 	cub3d_draw_image(cub3d, cub3d->mlx->width, cub3d->mlx->height);
+// 	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
+// 		exit(1);
+// 	user_controls(cub3d);
+// 	mlx_loop(cub3d->mlx);
+// 	mlx_terminate(cub3d->mlx);
+// 	exit(EXIT_SUCCESS);
+// }
+
 
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 {
@@ -33,7 +34,6 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 	ft_memset(img->pixels, bg_color, w * h * 4);
 
 	//FLOOR CASTING
-	// for(int y = 0; y < h; y++)
 	for(int y = h / 2 + 1; y < h; ++y)
 	{
 		// rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
@@ -182,7 +182,8 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 				side = 1;
 			}
 			//Check if ray has hit a wall
-			if (worldMap[mapX][mapY] > 0)
+			// if (worldMap[mapX][mapY] > 0)
+			if (cub3d->int_arr[mapY][mapX] > 0)
 				hit = 1;
 		}
 
@@ -210,7 +211,7 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			drawEnd = h - 1;
 
 		//texturing calculations
-		int texNum = worldMap[mapX][mapY] - 1; //1 subtracted from it so that texture 0 can be used!
+		int texNum = cub3d->int_arr[mapY][mapX] - 1; //1 subtracted from it so that texture 0 can be used!
 
 		//calculate value of wallX
 		double wallX; //where exactly the wall was hit

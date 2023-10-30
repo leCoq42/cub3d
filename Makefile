@@ -27,16 +27,32 @@ LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthrea
 #DIRS AND FILES
 INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
 
-SRC_DIR		:=	./src
-OBJ_DIR		:=	./obj
+MAIN		:=	src/main.c
+SRC_DIR		:=	src
+SRC			:=	main.c \
+				parsing/parse.c \
+				parsing/parse_header.c \
+				parsing/parsing_utils.c \
+				parsing/color.c \
+				parsing/texture.c \
+				parsing/parse_map.c \
+				parsing/get_map_info.c \
+				drawing/test.c \
+				drawing/move.c \
+				drawing/init.c \
+				drawing/draw.c \
+				drawing/color.c \
+				drawing/time.c \
 
-SRC			:=	test.c move.c init.c color.c draw.c time.c
+OBJ_DIR		:=	./obj
+MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
+# SRC			:=	test.c bresenham.c move.c init.c wu_line.c
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
-ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
+# ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
+ODIR 		:= $(sort $(subst src,./,$(dir $(SRC:%=$(OBJ_DIR)/%))))
 
 OBJS		:=	$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-# OBJS		:=	$(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
 
 #RECIPES:
 all: $(ODIR) $(NAME)
@@ -91,8 +107,11 @@ $(NAME): $(OBJS)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
+
+$(NAME): $(OBJS) $(MAIN_OBJ)
+	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+# @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 #&& printf "Compiling: $(notdir $<)\n"
 
 #OTHER:

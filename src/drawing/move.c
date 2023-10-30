@@ -22,30 +22,30 @@ void	player_move_hooks(void *param)
 	player = &cub3d->player;
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_A))
 	{
-		if (worldMap[(int)(player->x_pos - (player->y_dir) * strafeSpeed)][(int)player->y_pos] == false)
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - (player->y_dir) * strafeSpeed)] == false)
 			player->x_pos -= (player->y_dir) * strafeSpeed;
-		if (worldMap[(int)player->x_pos][(int)(player->y_pos + (player->x_dir) * strafeSpeed)] == false)
+		if (cub3d->int_arr[(int)(player->y_pos + (player->x_dir) * strafeSpeed)][(int)player->x_pos] == false)
 			player->y_pos += (player->x_dir) * strafeSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_D))
 	{
-		if (worldMap[(int)(player->x_pos + (player->y_dir) * strafeSpeed)][(int)player->y_pos] == false)
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + (player->y_dir) * strafeSpeed)] == false)
 			player->x_pos += (player->y_dir) * strafeSpeed;
-		if (worldMap[(int)player->x_pos][(int)(player->y_pos - (player->x_dir) * strafeSpeed)] == false)
+		if (cub3d->int_arr[(int)(player->y_pos - (player->x_dir) * strafeSpeed)][(int)player->x_pos] == false)
 			player->y_pos -= (player->x_dir) * strafeSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_W))
 	{
-		if (worldMap[(int)(player->x_pos + player->x_dir * moveSpeed)][(int)player->y_pos] == false)
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + player->x_dir * moveSpeed)] == false)
 			player->x_pos += player->x_dir * moveSpeed;
-		if (worldMap[(int)player->x_pos][(int)(player->y_pos + player->y_dir * moveSpeed)] == false)
+		if (cub3d->int_arr[(int)(player->y_pos + player->y_dir * moveSpeed)][(int)player->x_pos] == false)
 			player->y_pos += player->y_dir * moveSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_S))
 	{
-		if (worldMap[(int)(player->x_pos - player->x_dir * moveSpeed)][(int)player->y_pos] == false)
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - player->x_dir * moveSpeed)] == false)
 			player->x_pos -= player->x_dir * moveSpeed;
-		if (worldMap[(int)player->x_pos][(int)(player->y_pos - player->y_dir * moveSpeed)] == false)
+		if (cub3d->int_arr[(int)(player->y_pos - player->y_dir * moveSpeed)][(int)player->x_pos] == false)
 			player->y_pos -= player->y_dir * moveSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_RIGHT))
