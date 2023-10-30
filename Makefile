@@ -6,7 +6,7 @@ RM := /bin/rm -rf
 CFLAGS ?= -Wall -Wextra -Werror
 
 ifdef OPTIM
-	CFLAGS += -Ofast -march=native #-flto
+	CFLAGS += -Ofast -march=native -flto
 endif
 
 ifdef DEBUG
@@ -103,14 +103,14 @@ $(ODIR):
 	mkdir -p $@
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
 
 $(NAME): $(OBJS) $(MAIN_OBJ)
-	@$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 # @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
 #&& printf "Compiling: $(notdir $<)\n"
 
