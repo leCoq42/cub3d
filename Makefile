@@ -78,9 +78,21 @@ resan: clean fsan
 libs:
 	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@$(MAKE) -j -C $(LIBFT)
+
+oplibs:
+	git submodule update --remote --init --recursive
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 	@$(MAKE) -j -C $(LIBFT) optim
 
 relibs:
+	git submodule update --remote --init --recursive
+	@$(MAKE) fclean -C $(LIBFT)
+	@rm -rf $(LIBMLX)/build/
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@$(MAKE) -j -C $(LIBFT)
+
+reoplibs:
 	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
@@ -115,4 +127,4 @@ $(NAME): $(OBJS) $(MAIN_OBJ)
 #&& printf "Compiling: $(notdir $<)\n"
 
 #OTHER:
-.PHONY:	all, re, optim, reoptim, debug, rebug, fsan, resan, libs-update, libmlx, clean, fclean
+.PHONY:	all, re, optim, reoptim, debug, rebug, fsan, resan, libs, oplibs, relibs, reoplibs, clean, fclean

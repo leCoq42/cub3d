@@ -53,6 +53,9 @@ typedef struct s_player
 	double	y_pos;
 	double	y_dir;
 	double	y_plane;
+	float	move_speed;
+	float	rot_speed;
+	float	strafe_speed;
 }	t_player;
 
 typedef struct s_point_cub
@@ -95,6 +98,7 @@ typedef struct s_cub3d
 	uint32_t		bg_color;
 	double			time;
 	double			oldtime;
+	bool			show_fps;
 }	t_cub3d;
 
 //***********************************PROTOTYPES***********************************
@@ -157,7 +161,7 @@ uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
 
 // time.c
-void	show_fps(t_cub3d *cub3d, bool key_press);
+double	show_fps(t_cub3d *cub3d);
 
 static int worldMap[mapWidth][mapHeight]=
 {

@@ -25,6 +25,9 @@ void	init_player(t_player *player, t_point_cub st_pos)
 	player->y_dir = 0.0;
 	player->x_plane = 0.0;
 	player->y_plane = 0.66;
+	player->move_speed = 5.0;
+	player->rot_speed = 5.0;
+	player->strafe_speed = 3.0;
 }
 
 t_point	init_point(int x, int y, int z, uint32_t c)

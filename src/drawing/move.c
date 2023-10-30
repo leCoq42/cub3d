@@ -14,12 +14,17 @@ void	player_move_hooks(void *param)
 {
 	t_cub3d		*cub3d;
 	t_player	*player;
-	float		moveSpeed = 0.05;
-	float		rotSpeed = 0.05;
-	float		strafeSpeed = 0.05;
+	double		frametime;
+	float		moveSpeed;
+	float		rotSpeed;
+	float		strafeSpeed;
 
 	cub3d = (t_cub3d *)param;
 	player = &cub3d->player;
+	frametime = show_fps(cub3d);
+	moveSpeed = player->move_speed * frametime;
+	rotSpeed = player->rot_speed * frametime;
+	strafeSpeed = player->strafe_speed * frametime;
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_A))
 	{
 		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - (player->y_dir) * strafeSpeed)] == false)
@@ -68,7 +73,6 @@ void	player_move_hooks(void *param)
 		player->x_plane = player->x_plane * cos(rotSpeed) - player->y_plane * sin(rotSpeed);
 		player->y_plane = oldPlaneX * sin(rotSpeed) + player->y_plane * cos(rotSpeed);
 	}
-	show_fps(cub3d, 0);
 	cub3d_draw_image(cub3d, cub3d->mlx->width, cub3d->mlx->height);
 }
 
@@ -81,7 +85,12 @@ void	key_hooks(mlx_key_data_t keydata, void *param)
 	if (keydata.action == MLX_PRESS)
 	{
 		if (keydata.key == MLX_KEY_F)
-			show_fps(cub3d, true);
+		{
+			if (cub3d->show_fps == false)
+				cub3d->show_fps = true;
+			else if (cub3d->show_fps == true)
+				cub3d->show_fps = false;
+		}
 	}
 }
 
