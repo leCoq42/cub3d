@@ -3,8 +3,26 @@
 #include <stdint.h>
 
 static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h);
+static int get_tex_num(int side, int stepX, int stepY);
 // static void cast_walls(t_cub3d *cub3d, int32_t w, int32_t h);
 
+static int get_tex_num(int side, int stepX, int stepY)
+{
+	if (side == 0)
+	{
+		if (stepX > 0)
+			return (EAST);
+		else
+			return (WEST);
+	}
+	else
+	{
+		if (stepY > 0)
+			return (SOUTH);
+		else
+			return (NORTH);
+	}
+}
 static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h)
 {
 	t_color		color;
@@ -205,8 +223,7 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			drawEnd = h - 1;
 
 		//texturing calculations
-		int texNum = cub3d->int_arr[mapY][mapX] - 1; //1 subtracted from it so that texture 0 can be used!
-
+		int texNum = get_tex_num(side, stepX, stepY);
 		//calculate value of wallX
 		double wallX; //where exactly the wall was hit
 		if (side == 0)

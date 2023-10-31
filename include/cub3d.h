@@ -23,6 +23,12 @@
 #define FONT_WIDTH 90
 #define FONT_HEIGHT 90
 
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
+
 //***********************************STRUCTS***********************************
 typedef union color
 {
