@@ -42,7 +42,7 @@ bool	create_int_arr(t_cub3d *cub3d)
 	}
 	for (size_t i = 0; i < cub3d->map_height; i++)
 	{
-		for (size_t j = 0; j < cub3d->map_width; j++)
+		for (size_t j = 0; j < cub3d->map_width && cub3d->char_arr[i][j] != '\0' ; j++)
 		{
 			if (cub3d->char_arr[i][j] == '0')
 				int_arr[i][j] = 0;

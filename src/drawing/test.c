@@ -23,6 +23,7 @@ static int get_tex_num(int side, int stepX, int stepY)
 			return (NORTH);
 	}
 }
+
 static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h)
 {
 	t_color		color;
@@ -113,7 +114,8 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 	img = cub3d->img;
 	bg_color = cub3d->bg_color;
 
-	ft_memset(img->pixels, bg_color, w * h * 4);
+	// ft_memset(img->pixels, bg_color, cub3d->img->width * cub3d->img->height * sizeof(uint32_t));
+	ft_memset(img->pixels, bg_color, w * h * sizeof(uint32_t));
 
 	//FLOOR CASTING
 	cast_floor_and_ceiling(cub3d, w, h);
