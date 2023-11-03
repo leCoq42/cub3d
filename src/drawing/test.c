@@ -2,47 +2,32 @@
 #include "cub3d.h"
 #include <stdint.h>
 
-void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
+static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h);
+static int get_tex_num(int side, int stepX, int stepY);
+// static void cast_walls(t_cub3d *cub3d, int32_t w, int32_t h);
+
+static int get_tex_num(int side, int stepX, int stepY)
 {
-	t_player	player;
-	mlx_image_t	*img;
-	int32_t		bg_color;
+	if (side == 0)
+	{
+		if (stepX > 0)
+			return (EAST);
+		else
+			return (WEST);
+	}
+	else
+	{
+		if (stepY > 0)
+			return (SOUTH);
+		else
+			return (NORTH);
+	}
+}
+static void cast_floor_and_ceiling(t_cub3d *cub3d, int32_t w, int32_t h)
+{
 	t_color		color;
-
-	player = cub3d->player;
-	img = cub3d->img;
-	bg_color = cub3d->bg_color;
-
-	ft_memset(img->pixels, bg_color, w * h * 4);
-
-	//FLOOR CASTING
 	for(int y = h / 2 + 1; y < h; ++y)
 	{
-		// rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-		// float rayDirX0 = player.x_dir - player.x_plane;
-		// float rayDirY0 = player.y_dir - player.y_plane;
-		// float rayDirX1 = player.x_dir + player.x_plane;
-		// float rayDirY1 = player.y_dir + player.y_plane;
-
-		// Current y position compared to the center of the screen (the horizon)
-		// int p = y - h / 2;
-
-		// Vertical position of the camera.
-		// float posZ = 0.5 * h;
-
-		// Horizontal distance from the camera to the floor for the current row.
-		// 0.5 is the z position exactly in the middle between floor and ceiling.
-		// float rowDistance = posZ / p;
-
-		// calculate the real world step vector we have to add for each x (parallel to camera plane)
-		// adding step by step avoids multiplications with a weight in the inner loop
-		// float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / w;
-		// float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / w;
-
-		// real world coordinates of the leftmost column. This will be updated as we step to the right.
-		// float floorX = player.x_pos + rowDistance * rayDirX0;
-		// float floorY = player.y_pos + rowDistance * rayDirY0;
-
 		for(int x = 0; x < w; ++x)
 		{
 			color.c = cub3d->f_col;
@@ -58,53 +43,80 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			cub3d->img->pixels[img_idx + 2] = color.t_rgba.g;
 			cub3d->img->pixels[img_idx + 1] = color.t_rgba.b;
 			cub3d->img->pixels[img_idx + 0] = color.t_rgba.a;
-
-
-
-		// 	// the cell coord is simply got from the integer parts of floorX and floorY
-		// 	int cellX = (int)(floorX);
-		// 	int cellY = (int)(floorY);
-		//
-		// 	// get the texture coordinate from the fractional part
-		// 	int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
-		// 	int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
-		//
-		// 	floorX += floorStepX;
-		// 	floorY += floorStepY;
-		//
-		// 	// choose texture and draw the pixel
-		// int floorTexture = 3;
-		// 	int ceilingTexture = 3;
-		//
-		// 	// floor
-		// 	uint32_t tex_idx = (texWidth * ty + tx) * 4;
-		// 	t_color color;
-		// 	color.c = cub3d->f_col;
-		// 	uint32_t img_idx = (y * w + x) * 4;
-		// 	color.t_rgba.a = cub3d->textures[floorTexture]->pixels[tex_idx + 3];
-		// 	color.t_rgba.b = cub3d->textures[floorTexture]->pixels[tex_idx + 2];
-		// 	color.t_rgba.g = cub3d->textures[floorTexture]->pixels[tex_idx + 1];
-		// 	color.t_rgba.r = cub3d->textures[floorTexture]->pixels[tex_idx + 0];
-		// 	// color.c = (color.c >> 1) & 8355711; // make a bit darker
-		// 	cub3d->img->pixels[img_idx] = color.t_rgba.r;
-		// 	cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
-		// 	cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
-		// 	cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
-		//
-		// 	// ceiling (symmetrical, at screenHeight - y - 1 instead of y)
-		// 	color.c = cub3d->c_col;
-		// 	img_idx = ((h - y - 1) * w + x) * 4;
-		// 	color.t_rgba.a = cub3d->textures[ceilingTexture]->pixels[tex_idx + 3];
-		// 	color.t_rgba.b = cub3d->textures[ceilingTexture]->pixels[tex_idx + 2];
-		// 	color.t_rgba.g = cub3d->textures[ceilingTexture]->pixels[tex_idx + 1];
-		// 	color.t_rgba.r = cub3d->textures[ceilingTexture]->pixels[tex_idx + 0];
-		// 	// color.c = (color.c >> 1) & 8355711; // make a bit darker
-		// 	cub3d->img->pixels[img_idx] = color.t_rgba.r;
-		// 	cub3d->img->pixels[img_idx + 1] = color.t_rgba.g;
-		// 	cub3d->img->pixels[img_idx + 2] = color.t_rgba.b;
-		// 	cub3d->img->pixels[img_idx + 3] = color.t_rgba.a;
 		}
 	}
+}
+
+// static void cast_walls(t_cub3d *cub3d, int32_t w, int32_t h)
+// {
+// 	t_player	player;
+// 	mlx_image_t	*img;
+// 	int32_t		bg_color;
+
+// 	player = cub3d->player;
+// 	img = cub3d->img;
+// 	bg_color = cub3d->bg_color;
+// 	for(int x = 0; x < w; x++)
+// 	{
+// 		//calculate ray position and direction
+// 		double cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
+// 		double rayDirX = player.x_dir + player.x_plane * cameraX;
+// 		double rayDirY = player.y_dir + player.y_plane * cameraX;
+
+// 		//which box of the map we're in
+// 		int mapX = (int)player.x_pos;
+// 		int mapY = (int)player.y_pos;
+
+// 		//length of ray from current position to next x or y-side
+// 		double sideDistX;
+// 		double sideDistY;
+
+// 		double deltaDistX = (rayDirX == 0) ? 1e30 : fabs(1 / rayDirX);
+// 		double deltaDistY = (rayDirY == 0) ? 1e30 : fabs(1 / rayDirY);
+// 		//what direction to step in x or y-direction (either +1 or -1)
+// 		int stepX;
+// 		int stepY;
+
+// 		int hit = 0; //was there a wall hit?
+// 		int side; //was a NS or a EW wall hit?
+		
+// 		//calculate step and initial sideDist
+// 		if(rayDirX < 0)
+// 		{
+// 			stepX = -1;
+// 			sideDistX = (player.x_pos - mapX) * deltaDistX;
+// 		}
+// 		else
+// 		{
+// 			stepX = 1;
+// 			sideDistX = (mapX + 1.0 - player.x_pos) * deltaDistX;
+// 		}
+// 		if(rayDirY < 0)
+// 		{
+// 			stepY = -1;
+// 			sideDistY = (player.y_pos - mapY) * deltaDistY;
+// 		}
+// 		else
+// 		{
+// 			stepY = 1;
+// 			sideDistY = (mapY + 1.0 - player.y_pos) * deltaDistY;
+// 		}
+// }
+
+void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
+{
+	t_player	player;
+	mlx_image_t	*img;
+	int32_t		bg_color;
+
+	player = cub3d->player;
+	img = cub3d->img;
+	bg_color = cub3d->bg_color;
+
+	ft_memset(img->pixels, bg_color, w * h * 4);
+
+	//FLOOR CASTING
+	cast_floor_and_ceiling(cub3d, w, h);
 
 	//WALL CASTING
 	for(int x = 0; x < w; x++)
@@ -211,8 +223,7 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 			drawEnd = h - 1;
 
 		//texturing calculations
-		int texNum = cub3d->int_arr[mapY][mapX] - 1; //1 subtracted from it so that texture 0 can be used!
-
+		int texNum = get_tex_num(side, stepX, stepY);
 		//calculate value of wallX
 		double wallX; //where exactly the wall was hit
 		if (side == 0)

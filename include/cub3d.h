@@ -23,6 +23,12 @@
 #define FONT_WIDTH 90
 #define FONT_HEIGHT 90
 
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
+
 //***********************************STRUCTS***********************************
 typedef union color
 {
@@ -145,7 +151,6 @@ void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
 // init.c
 bool	init_cub3d(t_cub3d	*cub3d);
 void	init_player(t_player *player, t_point_cub st_pos);
-t_point	init_point(int x, int y, int z, uint32_t c);
 int		init_textures(mlx_texture_t **textures);
 // move.c
 void	user_controls(t_cub3d *cub3d);
