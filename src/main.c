@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 		exit(1);
 	if (!init_cub3d(cub3d))
 		exit(1);
-	cub3d_draw_image(cub3d, cub3d->mlx->width, cub3d->mlx->height);
+	cub3d_draw_image(cub3d, screenWidth, screenHeight);
 	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
 		exit(1);
 	user_controls(cub3d);

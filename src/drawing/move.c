@@ -3,8 +3,17 @@
 
 void	close_mlx(void *param);
 
+static void resize_func_cb(int32_t width, int32_t height, void *param)
+{
+	t_cub3d *cub3d;
+	cub3d = (t_cub3d *)param;
+	// printf("new width = %d and new height =  %d\n", width,  height);
+	mlx_resize_image(cub3d->img, width, height);
+}
+
 void	user_controls(t_cub3d *cub3d)
 {
+	mlx_resize_hook(cub3d->mlx, &resize_func_cb, cub3d);
 	mlx_loop_hook(cub3d->mlx, &player_move_hooks, cub3d);
 	mlx_key_hook(cub3d->mlx, &key_hooks, cub3d);
 	mlx_loop_hook(cub3d->mlx, &close_mlx, cub3d);
@@ -69,7 +78,7 @@ void	player_move_hooks(void *param)
 		player->y_plane = oldPlaneX * sin(rotSpeed) + player->y_plane * cos(rotSpeed);
 	}
 	show_fps(cub3d, 0);
-	cub3d_draw_image(cub3d, cub3d->mlx->width, cub3d->mlx->height);
+	cub3d_draw_image(cub3d, cub3d->img->width, cub3d->img->height);
 }
 
 void	key_hooks(mlx_key_data_t keydata, void *param)
