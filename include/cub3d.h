@@ -28,8 +28,38 @@
 #define SOUTH 2
 #define WEST 3
 
-
 //***********************************STRUCTS***********************************
+
+typedef struct s_line
+{
+	int32_t	start;
+	int32_t	end;
+}	t_line;
+
+typedef struct s_ray
+{
+	double	camera_x;
+	double	ray_dir_x;
+	double	ray_dir_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	int32_t	map_x;
+	int32_t	map_y;
+	int32_t	step_x;
+	int32_t	step_y;
+	int32_t	side;
+	int32_t	line_height;
+	int32_t	tex_num;
+	double	wall_x;
+	int32_t	tex_x;
+	int32_t	tex_y;
+	double	step;
+	double	tex_pos;
+}	t_ray;
+
 typedef union color
 {
 	uint32_t	c;
@@ -69,7 +99,8 @@ typedef struct s_point_cub
 	size_t	x_pos;
 	size_t	y_pos;
 	char	dir;
-}							t_point_cub;
+}	t_point_cub;
+
 // typedef struct s_map
 // {
 // 	size_t					height;
@@ -147,6 +178,7 @@ bool			get_dimensions(char **arr, t_cub3d *cub3d);
 // Function prototypes
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
 void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
+void	perform_dda(t_cub3d *cub3d, t_ray *ray);
 
 // init.c
 bool	init_cub3d(t_cub3d	*cub3d);
