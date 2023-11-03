@@ -83,18 +83,14 @@ typedef struct s_cub3d
 {
 	// t_map			*map;
 	char			*map_str;
+	mlx_texture_t	*textures[4];
+	uint32_t		c_col;
+	uint32_t		f_col;
 	char			**char_arr;
 	int				**int_arr;
 	t_point_cub		st_pos;
 	size_t			map_width;
 	size_t			map_height;
-	uint32_t		c_col;
-	uint32_t		f_col;
-	mlx_texture_t	*n_texture;
-	mlx_texture_t	*e_texture;
-	mlx_texture_t	*s_texture;
-	mlx_texture_t	*w_texture;
-	mlx_texture_t	*textures[8];
 	t_player		player;
 	mlx_t			*mlx;
 	mlx_image_t		*img;
@@ -133,12 +129,17 @@ int				ft_isspace(int c);
 // 				PARSE_MAP
 bool			parse_map(t_cub3d *cub3d);
 bool			validate_values(char *str);
-int				flood_fill(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar, char rep);
+// int				flood_fill(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar, char rep);
 bool			create_int_arr(t_cub3d *cub3d);
+bool			fill_int_arr(t_cub3d *cub3d);
 
 
 // 				GET_MAP_INFO
 bool			get_dimensions(char **arr, t_cub3d *cub3d);
+// void 			print_char_array(char **arr);
+// void 			print_int_array(int **arr, size_t h, size_t w);
+int				flood_fill_check(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar);
+int				flood_fill_repair(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar);
 
 // Function prototypes
 void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
@@ -164,34 +165,10 @@ t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
 // time.c
 void	show_fps(t_cub3d *cub3d, bool key_press);
 
-static int worldMap[mapWidth][mapHeight]=
-{
-  {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
-  {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-  {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-  {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-  {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-  {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
-  {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
-  {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-  {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
-  {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-  {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
-  {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
-  {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-  {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
-  {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-  {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
-  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-  {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
-  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-  {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
-  {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-  {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
-  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-  {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
-};
-
-
+// 				GET_MAP_INFO
+void			clean_cub3d(t_cub3d *cub3d);
+void			clean_textures(t_cub3d *cub3d);
+void			clean_char_arr(char **arr);
+void			clean_int_arr(int **arr);
 
 #endif

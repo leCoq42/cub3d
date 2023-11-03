@@ -10,7 +10,7 @@ ifdef OPTIM
 endif
 
 ifdef DEBUG
-	CFLAGS += -g -Og
+	CFLAGS += -g
 endif
 
 ifdef FSAN
@@ -37,12 +37,14 @@ SRC			:=	main.c \
 				parsing/texture.c \
 				parsing/parse_map.c \
 				parsing/get_map_info.c \
+				parsing/floodfill.c \
 				drawing/test.c \
 				drawing/move.c \
 				drawing/init.c \
 				drawing/draw.c \
 				drawing/color.c \
 				drawing/time.c \
+				error_handling/clean.c \
 
 OBJ_DIR		:=	./obj
 MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
