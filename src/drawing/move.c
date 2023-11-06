@@ -24,25 +24,28 @@ void	player_move_hooks(void *param)
 {
 	t_cub3d		*cub3d;
 	t_player	*player;
-	float		moveSpeed = 0.05;
-	float		rotSpeed = 0.05;
-	float		strafeSpeed = 0.05;
+	double		frametime;
+	float		moveSpeed;
+	float		rotSpeed;
 
 	cub3d = (t_cub3d *)param;
 	player = &cub3d->player;
+	frametime = show_fps(cub3d);
+	moveSpeed = player->move_speed * frametime;
+	rotSpeed = player->rot_speed * frametime;
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_A))
 	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - (player->y_dir) * strafeSpeed)] == false)
-			player->x_pos -= (player->y_dir) * strafeSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos + (player->x_dir) * strafeSpeed)][(int)player->x_pos] == false)
-			player->y_pos += (player->x_dir) * strafeSpeed;
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - player->x_plane * moveSpeed)] == false)
+			player->x_pos -= player->x_plane * moveSpeed;
+		if (cub3d->int_arr[(int)(player->y_pos - player->y_plane * moveSpeed)][(int)player->x_pos] == false)
+			player->y_pos -= player->y_plane * moveSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_D))
 	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + (player->y_dir) * strafeSpeed)] == false)
-			player->x_pos += (player->y_dir) * strafeSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos - (player->x_dir) * strafeSpeed)][(int)player->x_pos] == false)
-			player->y_pos -= (player->x_dir) * strafeSpeed;
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + player->x_plane * moveSpeed)] == false)
+			player->x_pos += player->x_plane * moveSpeed;
+		if (cub3d->int_arr[(int)(player->y_pos + player->y_plane * moveSpeed)][(int)player->x_pos] == false)
+			player->y_pos += player->y_plane * moveSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_W))
 	{
@@ -78,7 +81,6 @@ void	player_move_hooks(void *param)
 		player->x_plane = player->x_plane * cos(rotSpeed) - player->y_plane * sin(rotSpeed);
 		player->y_plane = oldPlaneX * sin(rotSpeed) + player->y_plane * cos(rotSpeed);
 	}
-	show_fps(cub3d, 0);
 	cub3d_draw_image(cub3d, cub3d->img->width, cub3d->img->height);
 }
 
@@ -87,11 +89,15 @@ void	key_hooks(mlx_key_data_t keydata, void *param)
 	t_cub3d	*cub3d;
 
 	cub3d = (t_cub3d *)param;
-
 	if (keydata.action == MLX_PRESS)
 	{
 		if (keydata.key == MLX_KEY_F)
-			show_fps(cub3d, true);
+		{
+			if (cub3d->show_fps == false)
+				cub3d->show_fps = true;
+			else if (cub3d->show_fps == true)
+				cub3d->show_fps = false;
+		}
 	}
 }
 

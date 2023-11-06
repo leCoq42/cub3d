@@ -38,18 +38,18 @@ SRC			:=	main.c \
 				parsing/parse_map.c \
 				parsing/get_map_info.c \
 				parsing/floodfill.c \
-				drawing/test.c \
+				drawing/raycasting.c \
 				drawing/move.c \
 				drawing/init.c \
 				drawing/draw.c \
 				drawing/color.c \
 				drawing/time.c \
+				drawing/textures.c \
 				drawing/mouse.c \
 				error_handling/clean.c \
 
 OBJ_DIR		:=	./obj
 MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
-# SRC			:=	test.c bresenham.c move.c init.c wu_line.c
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
 # ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
@@ -81,9 +81,21 @@ resan: clean fsan
 libs:
 	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@$(MAKE) -j -C $(LIBFT)
+
+oplibs:
+	git submodule update --remote --init --recursive
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 	@$(MAKE) -j -C $(LIBFT) optim
 
 relibs:
+	git submodule update --remote --init --recursive
+	@$(MAKE) fclean -C $(LIBFT)
+	@rm -rf $(LIBMLX)/build/
+	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	@$(MAKE) -j -C $(LIBFT)
+
+reoplibs:
 	git submodule update --remote --init --recursive
 	@$(MAKE) fclean -C $(LIBFT)
 	@rm -rf $(LIBMLX)/build/
@@ -118,4 +130,4 @@ $(NAME): $(OBJS) $(MAIN_OBJ)
 #&& printf "Compiling: $(notdir $<)\n"
 
 #OTHER:
-.PHONY:	all, re, optim, reoptim, debug, rebug, fsan, resan, libs-update, libmlx, clean, fclean
+.PHONY:	all, re, optim, reoptim, debug, rebug, fsan, resan, libs, oplibs, relibs, reoplibs, clean, fclean

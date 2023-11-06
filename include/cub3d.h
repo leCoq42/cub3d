@@ -28,8 +28,39 @@
 #define SOUTH 2
 #define WEST 3
 
-
 //***********************************STRUCTS***********************************
+
+typedef struct s_line
+{
+	int32_t	y_start;
+	int32_t	y_end;
+	int32_t	x;
+}	t_line;
+
+typedef struct s_ray
+{
+	double	camera_x;
+	double	ray_dir_x;
+	double	ray_dir_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	int32_t	map_x;
+	int32_t	map_y;
+	int32_t	step_x;
+	int32_t	step_y;
+	int32_t	side;
+	int32_t	line_height;
+	int32_t	tex_num;
+	double	wall_x;
+	int32_t	tex_x;
+	int32_t	tex_y;
+	double	step;
+	double	tex_pos;
+}	t_ray;
+
 typedef union color
 {
 	uint32_t	c;
@@ -59,6 +90,9 @@ typedef struct s_player
 	double	y_pos;
 	double	y_dir;
 	double	y_plane;
+	float	move_speed;
+	float	rot_speed;
+	float	strafe_speed;
 }	t_player;
 
 typedef struct s_point_cub
@@ -66,7 +100,7 @@ typedef struct s_point_cub
 	size_t	x_pos;
 	size_t	y_pos;
 	char	dir;
-}							t_point_cub;
+}	t_point_cub;
 
 typedef struct s_cub3d
 {
@@ -85,6 +119,7 @@ typedef struct s_cub3d
 	uint32_t		bg_color;
 	double			time;
 	double			oldtime;
+	bool			show_fps;
 	double			mouse_x;
 }	t_cub3d;
 
@@ -109,6 +144,7 @@ bool			info_is_valid(t_cub3d *cub3d, size_t *i, char *file_str);
 bool			get_color_header(char *file_str, t_cub3d *cub3d, char c, size_t *i);
 int				get_r_g_b(char *file_str, size_t *i);
 uint32_t		combine_rgb(int r, int g, int b);
+void			set_pixel_color(t_cub3d *cub3d, t_color color, uint32_t img_idx);
 
 // 				TEXTURE
 bool			get_texture(char *file_str, t_cub3d *cub3d, char c, size_t *i);
@@ -121,7 +157,6 @@ bool			validate_values(char *str);
 bool			create_int_arr(t_cub3d *cub3d);
 bool			fill_int_arr(t_cub3d *cub3d);
 
-
 // 				GET_MAP_INFO
 bool			get_dimensions(char **arr, t_cub3d *cub3d);
 // void 			print_char_array(char **arr);
@@ -129,29 +164,35 @@ bool			get_dimensions(char **arr, t_cub3d *cub3d);
 int				flood_fill_check(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar);
 int				flood_fill_repair(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar);
 
-// Function prototypes
-void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
-void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
+//				raycasting.c
+void			cast_floor_ceiling(t_cub3d *cub3d, int32_t w, int32_t h);
+void			cast_walls(t_cub3d *cub3d, int32_t w, int32_t h, int32_t x);
 
-// init.c
-bool	init_cub3d(t_cub3d	*cub3d);
-void	init_player(t_player *player, t_point_cub st_pos);
-int		init_textures(mlx_texture_t **textures);
-// move.c
-void	user_controls(t_cub3d *cub3d);
-void	player_move_hooks(void *param);
-void	key_hooks(mlx_key_data_t keydata, void *param);
+//				init.c
+bool			init_cub3d(t_cub3d	*cub3d);
+void			init_player(t_player *player, t_point_cub st_pos);
+int				init_textures(mlx_texture_t **textures);
+t_ray			init_ray(t_player player, int x, int w);
 
-// draw.c
-void	draw_vert(t_cub3d *cub3d, int32_t x, int32_t y_start, int32_t y_end);
-void	cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
+//				move.c
+void			user_controls(t_cub3d *cub3d);
+void			player_move_hooks(void *param);
+void			key_hooks(mlx_key_data_t keydata, void *param);
 
-// color.c
-uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
+//				draw.c
+void			cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
+void			draw_vert(t_cub3d *cub3d, t_line line);
+void			cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
+
+//				color.c
+t_color			get_pixel_color(t_cub3d *cub3d, int32_t x, int32_t y);
+
+//				drawing/textures.c
+int				get_tex_num(int side, int stepX, int stepY);
+void			tex_to_img(t_cub3d *cub3d, t_ray *ray, t_line *line, int32_t w);
 
 // time.c
-void	show_fps(t_cub3d *cub3d, bool key_press);
+double	show_fps(t_cub3d *cub3d);
 
 // 				GET_MAP_INFO
 void			clean_cub3d(t_cub3d *cub3d);
@@ -164,14 +205,3 @@ void			mouse_func_cb(double xpos, double ypos, void *param);
 void			rotate_mouse(int x_shift, t_player *player);
 
 #endif
-// typedef struct s_map
-// {
-// 	size_t					height;
-// 	size_t					width;
-// 	size_t					total_points;
-// 	char					*allowed_values;
-// 	char					*file_str;
-// 	char					**arr;
-// 	mlx_image_t				*img;
-// 	mlx_t					*mlx;
-// }							t_map;

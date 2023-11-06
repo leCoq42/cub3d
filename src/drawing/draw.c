@@ -1,12 +1,29 @@
 #include "cub3d.h"
-#include <stdint.h>
 
-void	draw_vert(t_cub3d *cub3d, int32_t x, int32_t y_start, int32_t y_end)
+void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 {
-	while (y_start < y_end)
+	mlx_image_t	*img;
+	int32_t		bg_color;
+	int32_t		x;
+
+	img = cub3d->img;
+	bg_color = cub3d->bg_color;
+	ft_memset(img->pixels, bg_color, w * h * 4);
+	cast_floor_ceiling(cub3d, w, h);
+	x = 0;
+	while (x < w)
 	{
-		cub3d_put_pixel(cub3d->img, x, y_start, get_color(cub3d, x, y_start));
-		y_start++;
+		cast_walls(cub3d, w, h, x);
+		x++;
+	}
+}
+
+void	draw_vert(t_cub3d *cub3d, t_line line)
+{
+	while (line.y_start < line.y_end)
+	{
+		cub3d_put_pixel(cub3d->img, line.x, line.y_start, get_pixel_color(cub3d, line.x, line.y_start));
+		line.y_start++;
 	}
 }
 

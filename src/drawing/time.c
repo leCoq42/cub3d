@@ -1,27 +1,15 @@
 #include "cub3d.h"
+#include <sys/types.h>
 
-void	show_fps(t_cub3d *cub3d, bool key_press)
+double	show_fps(t_cub3d *cub3d)
 {
-	static int	second = 0;
-	static int	frames = 0;
-	static bool	on;
+	static double	old_time = 0;
+	double			new_time;
+	double			frametime;
 
-	(void)cub3d;
-	if (key_press && !on)
-		on = true;
-	else if (key_press && on)
-		on = false;
-	else
-		frames++;
-	if (mlx_get_time() > second)
-	{
-		if (on)
-		{
-			// mlx_put_string(cub3d->mlx, "FPS:", 10, 10);
-			// mlx_put_string(cub3d->mlx, ft_itoa(frames), 50, 10);
-			ft_printf("FPS: %d\n", frames);
-		}
-		second++;
-		frames = 0;
-	}
+	new_time = mlx_get_time();
+	frametime = (new_time - old_time);
+	if (cub3d->show_fps == true)
+		printf("FPS: %.0f\n", 1 / frametime);
+	return (old_time = new_time, frametime);
 }

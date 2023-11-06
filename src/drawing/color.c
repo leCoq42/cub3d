@@ -1,17 +1,7 @@
 #include "cub3d.h"
 
-uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	uint32_t	color;
-	color = 0;
-	color |= (uint32_t)r << 24;
-	color |= (uint32_t)g << 16;
-	color |= (uint32_t)b << 8;
-	color |= (uint32_t)a;
-	return (color);
-}
 // TODO: img->width and img->height should not be > INT_MAX
-t_color	get_color(t_cub3d *cub3d, int32_t x, int32_t y)
+t_color	get_pixel_color(t_cub3d *cub3d, int32_t x, int32_t y)
 {
 	t_color	color;
 	uint32_t	start;
@@ -29,4 +19,12 @@ t_color	get_color(t_cub3d *cub3d, int32_t x, int32_t y)
 	color.t_rgba.b = cub3d->img->pixels[start + 2];
 	color.t_rgba.a = cub3d->img->pixels[start + 3];
 	return (color);
+}
+
+void	set_pixel_color(t_cub3d *cub3d, t_color color, uint32_t img_idx)
+{
+	cub3d->img->pixels[img_idx] = color.t_rgba.a;
+	cub3d->img->pixels[img_idx + 1] = color.t_rgba.b;
+	cub3d->img->pixels[img_idx + 2] = color.t_rgba.g;
+	cub3d->img->pixels[img_idx + 3] = color.t_rgba.r;
 }
