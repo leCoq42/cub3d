@@ -10,7 +10,7 @@ ifdef OPTIM
 endif
 
 ifdef DEBUG
-	CFLAGS += -g
+	CFLAGS += -g -Og
 endif
 
 ifdef FSAN
