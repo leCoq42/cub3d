@@ -4,7 +4,7 @@
 static void	init_view(t_player *player, t_point_cub st_pos);
 
 bool	init_cub3d(t_cub3d	*cub3d)
-{	
+{
 	cub3d->mlx = mlx_init(screenWidth, screenHeight, "cub3D", true);
 	if (!cub3d->mlx)
 		return (false);
@@ -13,7 +13,6 @@ bool	init_cub3d(t_cub3d	*cub3d)
 		return (false);
 	init_player(&cub3d->player, cub3d->st_pos);
 	cub3d->bg_color = 200;
-	// init_textures(cub3d->textures);
 	return (cub3d);
 }
 
@@ -70,4 +69,3 @@ t_ray	init_ray(t_player player, int x, int w)
 		ray.delta_dist_y = fabs(1 / ray.ray_dir_y);
 	return (ray);
 }
-
