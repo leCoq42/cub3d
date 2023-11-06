@@ -20,13 +20,19 @@ void	mouse_func_cb(double xpos, double ypos, void *param)
 
 void	rotate_mouse(int x_shift, t_player *player)
 {
-	float	rotSpeed;
+	float	rot_speed;
+	double	old_dirx;
+	double	old_planex;
 
-	rotSpeed = 0.005;
-	double oldDirX = player->x_dir;
-	player->x_dir = player->x_dir * cos(-rotSpeed * x_shift) - player->y_dir * sin(-rotSpeed * x_shift);
-	player->y_dir = oldDirX * sin(-rotSpeed * x_shift) + player->y_dir * cos(-rotSpeed * x_shift);
-	double oldPlaneX = player->x_plane;
-	player->x_plane = player->x_plane * cos(-rotSpeed * x_shift) - player->y_plane * sin(-rotSpeed * x_shift);
-	player->y_plane = oldPlaneX * sin(-rotSpeed * x_shift) + player->y_plane * cos(-rotSpeed * x_shift);
+	rot_speed = 0.005;
+	old_dirx = player->x_dir;
+	player->x_dir = player->x_dir * cos(-rot_speed * x_shift) - \
+						player->y_dir * sin(-rot_speed * x_shift);
+	player->y_dir = old_dirx * sin(-rot_speed * x_shift) + \
+						player->y_dir * cos(-rot_speed * x_shift);
+	old_planex = player->x_plane;
+	player->x_plane = player->x_plane * cos(-rot_speed * x_shift) - \
+						player->y_plane * sin(-rot_speed * x_shift);
+	player->y_plane = old_planex * sin(-rot_speed * x_shift) + \
+					player->y_plane * cos(-rot_speed * x_shift);
 }

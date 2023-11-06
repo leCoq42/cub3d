@@ -18,8 +18,8 @@ bool	init_cub3d(t_cub3d	*cub3d)
 
 void	init_player(t_player *player, t_point_cub st_pos)
 {
-	player->x_pos = st_pos.x_pos;
-	player->y_pos = st_pos.y_pos;
+	player->x_pos = st_pos.x_pos + 0.5;
+	player->y_pos = st_pos.y_pos + 0.5;
 	player->move_speed = 5.0;
 	player->rot_speed = 5.0;
 	init_view(player, st_pos);
