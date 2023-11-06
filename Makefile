@@ -22,7 +22,7 @@ AR := ar -crs
 #DEPENDENCIES:
 LIBMLX		:= ./libs/MLX42
 LIBFT		:= ./libs/libft_ext
-LIBS		:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthread
+LIB_FLAGS	:= $(LIBFT)/libft_ext.a $(LIBMLX)/build/libmlx42.a -lglfw -lm -ldl -pthread
 
 #DIRS AND FILES
 INCLUDES	:=	-I./include -I$(LIBMLX)/include/MLX42 -I$(LIBFT)/includes
@@ -53,13 +53,12 @@ OBJ_DIR		:=	./obj
 MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
-# ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))
 ODIR 		:= $(sort $(subst src,./,$(dir $(SRC:%=$(OBJ_DIR)/%))))
 
 OBJS		:=	$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 #RECIPES:
-all: $(ODIR) $(NAME)
+all: libinit $(ODIR) $(NAME)
 
 optim:
 	@$(MAKE) OPTIM=1 all
@@ -69,7 +68,7 @@ reoptim: clean optim
 debug:
 	$(MAKE) DEBUG=1
 
-rebug: clean
+rebug: fclean
 	@rm -rf $(LIBMLX)/build/
 	cmake -DDEBUG=1 -DGLFW_FETCH=0 $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 	$(MAKE) DEBUG=1
@@ -77,9 +76,9 @@ rebug: clean
 fsan:
 	$(MAKE) FSAN=1
 
-resan: clean fsan
+resan: fclean fsan
 
-libs:
+libinit:
 	git submodule update --remote --init --recursive
 	@cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 	@$(MAKE) -j -C $(LIBFT)
@@ -118,17 +117,11 @@ re: clean all
 $(ODIR):
 	mkdir -p $@
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
-# @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
+$(NAME): $(OBJS) $(MAIN_OBJ)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIB_FLAGS) $(INCLUDES) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
-
-$(NAME): $(OBJS) $(MAIN_OBJ)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
-# @$(CC) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME) -lm
-#&& printf "Compiling: $(notdir $<)\n"
 
 #OTHER:
 .PHONY:	all, re, optim, reoptim, debug, rebug, fsan, resan, libs, oplibs, relibs, reoplibs, clean, fclean
