@@ -12,7 +12,7 @@ bool	init_cub3d(t_cub3d	*cub3d)
 	if (!cub3d->img)
 		return (false);
 	init_player(&cub3d->player, cub3d->st_pos);
-	cub3d->bg_color = 200;
+	cub3d->bg_color = 0x00000000;
 	return (cub3d);
 }
 
@@ -22,7 +22,6 @@ void	init_player(t_player *player, t_point_cub st_pos)
 	player->y_pos = st_pos.y_pos + 0.5;
 	player->move_speed = 5.0;
 	player->rot_speed = 5.0;
-	player->strafe_speed = 3.0;
 	init_view(player, st_pos);
 }
 

@@ -1,6 +1,5 @@
 #include "cub3d.h"
 
-// TODO: img->width and img->height should not be > INT_MAX
 t_color	get_pixel_color(t_cub3d *cub3d, int32_t x, int32_t y)
 {
 	t_color		color;

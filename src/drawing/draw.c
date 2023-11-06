@@ -22,8 +22,8 @@ void	draw_vert(t_cub3d *cub3d, t_line line)
 {
 	while (line.y_start < line.y_end)
 	{
-		cub3d_put_pixel(cub3d->img, line.x, line.y_start, \
-				get_pixel_color(cub3d, line.x, line.y_start));
+		cub3d_put_pixel(cub3d->img, line.x, line.y_start,
+			get_pixel_color(cub3d, line.x, line.y_start));
 		line.y_start++;
 	}
 }
