@@ -12,13 +12,13 @@ bool	get_texture(char *file_str, t_cub3d *cub3d, char identifier, size_t *i)
 	texture = NULL;
 	texture = ft_substr(&file_str[*i], 0, (end_tex_name - *i));
 	if (!texture)
-		return (perror("substr fail\n"), false);
+		return (perror("Error\nsubstr fail"), false);
 	if (!check_path(cub3d, identifier, texture))
 		return (false);
 	*i = end_tex_name;
 	skip_chars(file_str, i, " ");
 	if (file_str[*i] != '\n')
-		return (free(texture), perror("invalid map info\n"), false);
+		return (free(texture), perror("Eror\ninvalid map info"), false);
 	return (true);
 }
 
@@ -28,7 +28,8 @@ bool	check_path(t_cub3d *cub3d, char identifier, char *tex_path)
 
 	texture = mlx_load_png(tex_path);
 	if (!texture)
-		return (perror("invalid path to texture\n"), free(tex_path), false);
+		return (perror("Error\ninvalid path to texture"), \
+							free(tex_path), false);
 	free(tex_path);
 	if (identifier == 'N')
 		cub3d->textures[0] = texture;

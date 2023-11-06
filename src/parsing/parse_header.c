@@ -21,12 +21,12 @@ bool	parse_header(int fd, t_cub3d *cub3d)
 				return (false);
 		}
 		else
-			return (perror("invalid map info\n"), false);
+			return (perror("Error\ninvalid map info"), false);
 		count++;
 	}
 	if (info_is_valid(cub3d, &i, file_str))
 		return (true);
-	return (false);
+	return (perror("Error\ninvalid map info"), false);
 }
 
 bool	info_is_valid(t_cub3d *cub3d, size_t *i, char *file_str)
@@ -56,7 +56,7 @@ bool	extract_info(char *file_str, size_t *i, t_cub3d *cub3d)
 		c = file_str[*i];
 		(*i)++;
 		if (!get_color_header(file_str, cub3d, c, i))
-			return (false);
+			return (perror("Error\ninvalid color info"), false);
 	}
 	else if (is_present("NESW", file_str[*i]))
 	{
@@ -79,7 +79,7 @@ char	*file_to_str(int fd)
 	file_str = "";
 	while (new_str)
 	{
-		file_str = ft_strjoin(file_str, new_str);
+		file_str = strjoin_free(file_str, new_str);
 		new_str = get_next_line(fd);
 	}
 	return (file_str);

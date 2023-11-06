@@ -1,7 +1,7 @@
 #include "cub3d.h"
 #include "MLX42.h"
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_cub3d	*cub3d;
 

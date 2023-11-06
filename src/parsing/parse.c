@@ -7,7 +7,7 @@ t_cub3d	*parse_file(char *filename)
 
 	fd = check_filename(filename);
 	if (fd < 0)
-		exit(EXIT_FAILURE);
+		return (perror("invalid file"), NULL);
 	cub3d = ft_calloc(1, sizeof(t_cub3d));
 	if (!cub3d)
 		exit(EXIT_FAILURE);
