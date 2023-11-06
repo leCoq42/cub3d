@@ -14,8 +14,8 @@
 #include "ft_printf.h"
 #include "get_next_line_bonus.h"
 
-#define screenWidth 800
-#define screenHeight 720
+#define screenWidth 1920
+#define screenHeight 1080
 #define mapWidth 24
 #define mapHeight 24
 #define texWidth 64
