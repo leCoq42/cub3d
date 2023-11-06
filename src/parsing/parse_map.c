@@ -1,72 +1,19 @@
 #include "cub3d.h"
 
-// static void print_char_array(char **arr);
-// static void print_int_array(int **arr, size_t h, size_t w);
-
-// static void print_char_array(char **arr)
-// {
-// 	for (int i = 0; arr[i] != NULL; i++)
-// 	{
-// 		for (int j = 0; arr[i][j] != '\0'; j++)
-// 		{
-// 			// printf("(%d, %d) = %c", i, j, arr[i][j]);
-// 			printf("%c", arr[i][j]);
-// 		}
-// 		printf("\n");
-// 	}
-// 	printf("\n");
-// }
-
-// static void print_int_array(int **arr, size_t h, size_t w)
-// {
-// 	for (size_t i = 0; i < h; i++)
-// 	{
-// 		for (size_t j = 0; j < w; j++)
-// 		{
-// 			// printf("(%d, %d) = %c", i, j, arr[i][j]);
-// 			printf("%d", arr[i][j]);
-// 		}
-// 		printf("\n");
-// 	}
-// 	printf("\n");
-// }
-
-bool	create_int_arr(t_cub3d *cub3d)
-{
-	int	**int_arr;
-
-	int_arr = malloc(cub3d->map_height * sizeof(int *));
-	for (size_t i = 0; i < cub3d->map_height; i++)
-	{
-		int_arr[i] = malloc(cub3d->map_width * sizeof(int));
-	}
-	for (size_t i = 0; i < cub3d->map_height; i++)
-	{
-		for (size_t j = 0; j < cub3d->map_width && cub3d->char_arr[i][j] != '\0' ; j++)
-		{
-			if (cub3d->char_arr[i][j] == '0')
-				int_arr[i][j] = 0;
-			else
-				int_arr[i][j] = 1;
-		}
-	}
-	cub3d->int_arr = int_arr;
-	return (true);
-}
-
 bool	parse_map(t_cub3d *cub3d)
 {
 	if (!validate_values(cub3d->map_str))
 		return (false);
 	cub3d->char_arr = ft_split(cub3d->map_str, '\n');
+	if (!cub3d->char_arr)
+		return (false);
 	if (!get_dimensions(cub3d->char_arr, cub3d))
-		return(perror("no start position found\n"), false);
-	if (flood_fill(cub3d, cub3d->st_pos.x_pos, cub3d->st_pos.y_pos, '0', 'c'))
-		return(perror("invalid map\n"), false);
-	flood_fill(cub3d, cub3d->st_pos.x_pos, cub3d->st_pos.y_pos, 'c', '0');
-	// print_char_array(cub3d->char_arr);
+		return (perror("Error\nno start position found"), false);
+	if (flood_fill_check(cub3d, cub3d->st_pos.x_pos, cub3d->st_pos.y_pos, '0'))
+		return (perror("Error\ninvalid map"), false);
+	flood_fill_repair(cub3d, cub3d->st_pos.x_pos, cub3d->st_pos.y_pos, 'c');
 	create_int_arr(cub3d);
-	// print_int_array(cub3d->int_arr, cub3d->map_height, cub3d->map_width);
+	fill_int_arr(cub3d);
 	return (true);
 }
 
@@ -85,40 +32,57 @@ bool	validate_values(char *str)
 			if (flag == 0)
 				flag = 1;
 			else if (flag == 1)
-				return (perror("too many start positions\n"), false);
+				return (perror("Error\ntoo many start positions"), false);
 			i++;
 		}
 		else if (str[i] == '\0')
-			break;
+			break ;
 		else
-			return (perror("invalid start position\n"), false);
+			return (perror("Error\ninvalid start position"), false);
 	}
 	if (flag == 1)
 		return (true);
 	return (false);
 }
 
-int flood_fill(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar, char rep)
+bool	create_int_arr(t_cub3d *cub3d)
 {
-	char	wall;
+	int		**int_arr;
+	size_t	i;
 
-	wall = '1';
-	if (pos_x >= cub3d->map_width || pos_x < 0)
-		return (1);
-	if (pos_y >= cub3d->map_height || pos_y < 0)
-		return (1);
-	if (cub3d->char_arr[pos_y][pos_x] == wall || cub3d->char_arr[pos_y][pos_x] == rep)
-		return (0);
-	else if (cub3d->char_arr[pos_y][pos_x] != cub3d->st_pos.dir && cub3d->char_arr[pos_y][pos_x] != tar)
-		return (1);
-	cub3d->char_arr[pos_y][pos_x] = rep;
-	if (flood_fill(cub3d, pos_x + 1, pos_y, tar, rep) == 1)
-		return (1);
-	if (flood_fill(cub3d, pos_x - 1, pos_y, tar, rep) == 1)
-		return (1);
-	if (flood_fill(cub3d, pos_x, pos_y + 1, tar, rep) == 1)
-		return (1);
-	if (flood_fill(cub3d, pos_x, pos_y - 1, tar, rep) == 1)
-		return (1);
-	return (0);
+	int_arr = malloc(cub3d->map_height * sizeof(int *));
+	if (!int_arr)
+		return (false);
+	i = 0;
+	while (i < cub3d->map_height)
+	{
+		int_arr[i] = malloc(cub3d->map_width * sizeof(int));
+		if (!int_arr[i])
+			return (false);
+		i++;
+	}
+	cub3d->int_arr = int_arr;
+	return (true);
+}
+
+bool	fill_int_arr(t_cub3d *cub3d)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	while (i < cub3d->map_height)
+	{
+		j = 0;
+		while (j < cub3d->map_width && cub3d->char_arr[i][j] != '\0')
+		{
+			if (cub3d->char_arr[i][j] == '0')
+				cub3d->int_arr[i][j] = 0;
+			else
+				cub3d->int_arr[i][j] = 1;
+			j++;
+		}
+		i++;
+	}
+	return (true);
 }

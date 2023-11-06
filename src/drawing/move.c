@@ -13,6 +13,7 @@ static void resize_func_cb(int32_t width, int32_t height, void *param)
 
 void	user_controls(t_cub3d *cub3d)
 {
+	mlx_cursor_hook(cub3d->mlx, &mouse_func_cb, cub3d);
 	mlx_resize_hook(cub3d->mlx, &resize_func_cb, cub3d);
 	mlx_loop_hook(cub3d->mlx, &player_move_hooks, cub3d);
 	mlx_key_hook(cub3d->mlx, &key_hooks, cub3d);

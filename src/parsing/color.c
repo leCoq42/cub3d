@@ -1,6 +1,6 @@
 #include "cub3d.h"
 
-bool	get_color_header(char *file_str, t_cub3d *cub3d, char identifier, size_t *i)
+bool	get_color_header(char *file_str, t_cub3d *cub3d, char id, size_t *i)
 {
 	int		r;
 	int		g;
@@ -19,9 +19,9 @@ bool	get_color_header(char *file_str, t_cub3d *cub3d, char identifier, size_t *i
 	b = get_r_g_b(file_str, i);
 	if (b == -1)
 		return (false);
-	if (identifier == 'F')
+	if (id == 'F')
 		cub3d->f_col = combine_rgb(r, g, b);
-	else if (identifier == 'C')
+	else if (id == 'C')
 		cub3d->c_col = combine_rgb(r, g, b);
 	return (true);
 }
