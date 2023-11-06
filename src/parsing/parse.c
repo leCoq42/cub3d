@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vbrouwer <vbrouwer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:20:46 by mhaan             #+#    #+#             */
-/*   Updated: 2023/11/06 16:20:47 by mhaan            ###   ########.fr       */
+/*   Updated: 2023/11/06 17:02:56 by vbrouwer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_cub3d	*parse_file(char *filename)
 
 	fd = check_filename(filename);
 	if (fd < 0)
-		return (perror("invalid file"), NULL);
+		return (perror("Error\ninvalid file"), NULL);
 	cub3d = ft_calloc(1, sizeof(t_cub3d));
 	if (!cub3d)
 		exit(EXIT_FAILURE);

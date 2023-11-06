@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vbrouwer <vbrouwer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:20:49 by mhaan             #+#    #+#             */
-/*   Updated: 2023/11/06 16:20:50 by mhaan            ###   ########.fr       */
+/*   Updated: 2023/11/06 17:02:48 by vbrouwer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ int	check_filename(char *map_name)
 	int	x;
 
 	if (ft_strlen(map_name) < 4)
-		return (ft_putstr_fd("Error\n", STDERR_FILENO), -1);
+		return (-1);
 	x = ft_strlen(map_name) - 4;
 	if (ft_strncmp(&map_name[x], ".cub", 5) != 0)
-		return (ft_putstr_fd("Error\n", STDERR_FILENO), -1);
+		return (-1);
 	return (open(map_name, O_RDONLY));
 }
 

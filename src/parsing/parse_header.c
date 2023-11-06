@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_header.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vbrouwer <vbrouwer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:20:38 by mhaan             #+#    #+#             */
-/*   Updated: 2023/11/06 16:20:40 by mhaan            ###   ########.fr       */
+/*   Updated: 2023/11/06 17:00:21 by vbrouwer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ bool	parse_header(int fd, t_cub3d *cub3d)
 		if (is_identifier(&file_str[i]))
 		{
 			if (!extract_info(file_str, &i, cub3d))
-				return (false);
+				return (free(file_str), false);
 		}
 		else
-			return (perror("Error\ninvalid map info"), false);
+			return (free(file_str), perror("Error\ninvalid map info"), false);
 		count++;
 	}
 	if (info_is_valid(cub3d, &i, file_str))
