@@ -37,23 +37,16 @@ SRC			:=	main.c \
 				parsing/texture.c \
 				parsing/parse_map.c \
 				parsing/get_map_info.c \
-<<<<<<< HEAD
-				drawing/raycasting.c \
-=======
 				parsing/floodfill.c \
-				drawing/test.c \
->>>>>>> 4f68921c3285d1725283177ea200a3f39e4f1970
+				drawing/raycasting.c \
 				drawing/move.c \
 				drawing/init.c \
 				drawing/draw.c \
 				drawing/color.c \
 				drawing/time.c \
-<<<<<<< HEAD
-				drawing/textures.c
-=======
+				drawing/textures.c \
 				drawing/mouse.c \
 				error_handling/clean.c \
->>>>>>> 4f68921c3285d1725283177ea200a3f39e4f1970
 
 OBJ_DIR		:=	./obj
 MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
