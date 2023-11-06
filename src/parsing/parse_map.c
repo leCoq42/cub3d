@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vbrouwer <vbrouwer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:20:41 by mhaan             #+#    #+#             */
-/*   Updated: 2023/11/06 16:20:42 by mhaan            ###   ########.fr       */
+/*   Updated: 2023/11/06 16:49:07 by vbrouwer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool	validate_values(char *str)
 		else if (str[i] == '\0')
 			break ;
 		else
-			return (perror("Error\ninvalid start position"), false);
+			return (perror("Error\ninvalid map"), false);
 	}
 	if (flag == 1)
 		return (true);
