@@ -4,7 +4,7 @@
 static void	init_view(t_player *player, t_point_cub st_pos);
 
 bool	init_cub3d(t_cub3d	*cub3d)
-{	
+{
 	cub3d->mlx = mlx_init(screenWidth, screenHeight, "cub3D", true);
 	if (!cub3d->mlx)
 		return (false);
@@ -12,8 +12,7 @@ bool	init_cub3d(t_cub3d	*cub3d)
 	if (!cub3d->img)
 		return (false);
 	init_player(&cub3d->player, cub3d->st_pos);
-	cub3d->bg_color = 200;
-	// init_textures(cub3d->textures);
+	cub3d->bg_color = 0x00000000;
 	return (cub3d);
 }
 
@@ -23,7 +22,6 @@ void	init_player(t_player *player, t_point_cub st_pos)
 	player->y_pos = st_pos.y_pos;
 	player->move_speed = 5.0;
 	player->rot_speed = 5.0;
-	player->strafe_speed = 3.0;
 	init_view(player, st_pos);
 }
 
@@ -70,4 +68,3 @@ t_ray	init_ray(t_player player, int x, int w)
 		ray.delta_dist_y = fabs(1 / ray.ray_dir_y);
 	return (ray);
 }
-

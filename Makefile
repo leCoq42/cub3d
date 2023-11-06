@@ -46,6 +46,7 @@ SRC			:=	main.c \
 				drawing/time.c \
 				drawing/textures.c \
 				drawing/mouse.c \
+				drawing/hooks.c \
 				error_handling/clean.c \
 
 OBJ_DIR		:=	./obj

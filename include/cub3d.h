@@ -90,9 +90,8 @@ typedef struct s_player
 	double	y_pos;
 	double	y_dir;
 	double	y_plane;
-	float	move_speed;
-	float	rot_speed;
-	float	strafe_speed;
+	double	move_speed;
+	double	rot_speed;
 }	t_player;
 
 typedef struct s_point_cub
@@ -175,9 +174,16 @@ int				init_textures(mlx_texture_t **textures);
 t_ray			init_ray(t_player player, int x, int w);
 
 //				move.c
-void			user_controls(t_cub3d *cub3d);
-void			player_move_hooks(void *param);
+void			move_straight(t_player *player, int **map, double move_speed, bool fwd);
+void			move_strafe(t_player *player, int **map, double move_speed, bool right);
+void			move_rotate(t_player *player, double rot_spd, bool right);
+
+//				hooks.c
+void			cub3d_hooks(t_cub3d *cub3d);
+void			player_controls(void *param);
 void			key_hooks(mlx_key_data_t keydata, void *param);
+void			resize_func_cb(int32_t width, int32_t height, void *param);
+void			close_mlx(void *param);
 
 //				draw.c
 void			cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);

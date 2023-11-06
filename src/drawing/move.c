@@ -1,114 +1,49 @@
-#include "MLX42.h"
 #include "cub3d.h"
 
-void	close_mlx(void *param);
-
-static void resize_func_cb(int32_t width, int32_t height, void *param)
+void	move_straight(t_player *player, int **map, double move_speed, bool fwd)
 {
-	t_cub3d *cub3d;
-	cub3d = (t_cub3d *)param;
-	// printf("new width = %d and new height =  %d\n", width,  height);
-	mlx_resize_image(cub3d->img, width, height);
+	double	*x_pos;
+	double	*y_pos;
+
+	x_pos = &player->x_pos;
+	y_pos = &player->y_pos;
+	if (!fwd)
+		move_speed *= -1;
+	if (map[(int)*y_pos][(int)(*x_pos + player->x_dir * move_speed)] == 0)
+		*x_pos += player->x_dir * move_speed;
+	if (map[(int)(*y_pos + player->y_dir * move_speed)][(int)*x_pos] == 0)
+		*y_pos += player->y_dir * move_speed;
 }
 
-void	user_controls(t_cub3d *cub3d)
+void	move_strafe(t_player *player, int **map, double move_speed, bool right)
 {
-	mlx_cursor_hook(cub3d->mlx, &mouse_func_cb, cub3d);
-	mlx_resize_hook(cub3d->mlx, &resize_func_cb, cub3d);
-	mlx_loop_hook(cub3d->mlx, &player_move_hooks, cub3d);
-	mlx_key_hook(cub3d->mlx, &key_hooks, cub3d);
-	mlx_loop_hook(cub3d->mlx, &close_mlx, cub3d);
+	double	*x_pos;
+	double	*y_pos;
+
+	x_pos = &player->x_pos;
+	y_pos = &player->y_pos;
+	if (!right)
+		move_speed *= -1;
+	if (map[(int)*y_pos][(int)(*x_pos + player->x_plane * move_speed)] == 0)
+		*x_pos += player->x_plane * move_speed;
+	if (map[(int)(*y_pos + player->y_plane * move_speed)][(int)*x_pos] == 0)
+		*y_pos += player->y_plane * move_speed;
 }
 
-void	player_move_hooks(void *param)
+void	move_rotate(t_player *player, double rot_spd, bool right)
 {
-	t_cub3d		*cub3d;
-	t_player	*player;
-	double		frametime;
-	float		moveSpeed;
-	float		rotSpeed;
+	double	old_dir_x;
+	double	old_plane_x;
 
-	cub3d = (t_cub3d *)param;
-	player = &cub3d->player;
-	frametime = show_fps(cub3d);
-	moveSpeed = player->move_speed * frametime;
-	rotSpeed = player->rot_speed * frametime;
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_A))
-	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - player->x_plane * moveSpeed)] == false)
-			player->x_pos -= player->x_plane * moveSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos - player->y_plane * moveSpeed)][(int)player->x_pos] == false)
-			player->y_pos -= player->y_plane * moveSpeed;
-	}
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_D))
-	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + player->x_plane * moveSpeed)] == false)
-			player->x_pos += player->x_plane * moveSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos + player->y_plane * moveSpeed)][(int)player->x_pos] == false)
-			player->y_pos += player->y_plane * moveSpeed;
-	}
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_W))
-	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + player->x_dir * moveSpeed)] == false)
-			player->x_pos += player->x_dir * moveSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos + player->y_dir * moveSpeed)][(int)player->x_pos] == false)
-			player->y_pos += player->y_dir * moveSpeed;
-	}
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_S))
-	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - player->x_dir * moveSpeed)] == false)
-			player->x_pos -= player->x_dir * moveSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos - player->y_dir * moveSpeed)][(int)player->x_pos] == false)
-			player->y_pos -= player->y_dir * moveSpeed;
-	}
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_RIGHT))
-	{
-		//both camera direction and camera plane must be rotated
-		double oldDirX = player->x_dir;
-		player->x_dir = player->x_dir * cos(-rotSpeed) - player->y_dir * sin(-rotSpeed);
-		player->y_dir = oldDirX * sin(-rotSpeed) + player->y_dir * cos(-rotSpeed);
-		double oldPlaneX = player->x_plane;
-		player->x_plane = player->x_plane * cos(-rotSpeed) - player->y_plane * sin(-rotSpeed);
-		player->y_plane = oldPlaneX * sin(-rotSpeed) + player->y_plane * cos(-rotSpeed);
-	}
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_LEFT))
-	{
-		//both camera direction and camera plane must be rotated
-		double oldDirX = player->x_dir;
-		player->x_dir = player->x_dir * cos(rotSpeed) - player->y_dir * sin(rotSpeed);
-		player->y_dir = oldDirX * sin(rotSpeed) + player->y_dir * cos(rotSpeed);
-		double oldPlaneX = player->x_plane;
-		player->x_plane = player->x_plane * cos(rotSpeed) - player->y_plane * sin(rotSpeed);
-		player->y_plane = oldPlaneX * sin(rotSpeed) + player->y_plane * cos(rotSpeed);
-	}
-	cub3d_draw_image(cub3d, cub3d->img->width, cub3d->img->height);
-}
-
-void	key_hooks(mlx_key_data_t keydata, void *param)
-{
-	t_cub3d	*cub3d;
-
-	cub3d = (t_cub3d *)param;
-	if (keydata.action == MLX_PRESS)
-	{
-		if (keydata.key == MLX_KEY_F)
-		{
-			if (cub3d->show_fps == false)
-				cub3d->show_fps = true;
-			else if (cub3d->show_fps == true)
-				cub3d->show_fps = false;
-		}
-	}
-}
-
-void	close_mlx(void *param)
-{
-	t_cub3d	*cub3d;
-
-	cub3d = (t_cub3d *)param;
-	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_ESCAPE))
-	{
-		printf("Closing.\n");
-		mlx_close_window(cub3d->mlx);
-	}
+	if (!right)
+		rot_spd *= -1;
+	old_dir_x = player->x_dir;
+	player->x_dir = player->x_dir * cos(-rot_spd)
+		- player->y_dir * sin(-rot_spd);
+	player->y_dir = old_dir_x * sin(-rot_spd) + player->y_dir * cos(-rot_spd);
+	old_plane_x = player->x_plane;
+	player->x_plane = player->x_plane * cos(-rot_spd)
+		- player->y_plane * sin(-rot_spd);
+	player->y_plane = old_plane_x * sin(-rot_spd)
+		+ player->y_plane * cos(-rot_spd);
 }
