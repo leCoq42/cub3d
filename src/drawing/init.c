@@ -50,3 +50,24 @@ static void	init_view(t_player *player, t_point_cub st_pos)
 		player->y_plane = 1;
 	}
 }
+
+t_ray	init_ray(t_player player, int x, int w)
+{
+	t_ray	ray;
+
+	ray.camera_x = 2 * x / (double)w - 1;
+	ray.ray_dir_x = player.x_dir + player.x_plane * ray.camera_x;
+	ray.ray_dir_y = player.y_dir + player.y_plane * ray.camera_x;
+	ray.map_x = (int)player.x_pos;
+	ray.map_y = (int)player.y_pos;
+	if (ray.ray_dir_x == 0)
+		ray.delta_dist_x = 1e30;
+	else
+		ray.delta_dist_x = fabs(1 / ray.ray_dir_x);
+	if (ray.ray_dir_y == 0)
+		ray.delta_dist_y = 1e30;
+	else
+		ray.delta_dist_y = fabs(1 / ray.ray_dir_y);
+	return (ray);
+}
+

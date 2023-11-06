@@ -32,8 +32,9 @@
 
 typedef struct s_line
 {
-	int32_t	start;
-	int32_t	end;
+	int32_t	y_start;
+	int32_t	y_end;
+	int32_t	x;
 }	t_line;
 
 typedef struct s_ray
@@ -159,6 +160,7 @@ bool			info_is_valid(t_cub3d *cub3d, size_t *i, char *file_str);
 bool			get_color_header(char *file_str, t_cub3d *cub3d, char c, size_t *i);
 int				get_r_g_b(char *file_str, size_t *i);
 uint32_t		combine_rgb(int r, int g, int b);
+void			set_pixel_color(t_cub3d *cub3d, t_color color, uint32_t img_idx);
 
 // 				TEXTURE
 bool			get_texture(char *file_str, t_cub3d *cub3d, char c, size_t *i);
@@ -171,31 +173,35 @@ bool			validate_values(char *str);
 int				flood_fill(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar, char rep);
 bool			create_int_arr(t_cub3d *cub3d);
 
-
 // 				GET_MAP_INFO
 bool			get_dimensions(char **arr, t_cub3d *cub3d);
 
-// Function prototypes
-void	cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
-void	draw_line(t_cub3d *cub3d, t_point p1, t_point p2);
-void	perform_dda(t_cub3d *cub3d, t_ray *ray);
+//				raycasting.c
+void			cast_floor_ceiling(t_cub3d *cub3d, int32_t w, int32_t h);
+void			cast_walls(t_cub3d *cub3d, int32_t w, int32_t h, int32_t x);
 
-// init.c
-bool	init_cub3d(t_cub3d	*cub3d);
-void	init_player(t_player *player, t_point_cub st_pos);
-int		init_textures(mlx_texture_t **textures);
-// move.c
-void	user_controls(t_cub3d *cub3d);
-void	player_move_hooks(void *param);
-void	key_hooks(mlx_key_data_t keydata, void *param);
+//				init.c
+bool			init_cub3d(t_cub3d	*cub3d);
+void			init_player(t_player *player, t_point_cub st_pos);
+int				init_textures(mlx_texture_t **textures);
+t_ray			init_ray(t_player player, int x, int w);
 
-// draw.c
-void	draw_vert(t_cub3d *cub3d, int32_t x, int32_t y_start, int32_t y_end);
-void	cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
+//				move.c
+void			user_controls(t_cub3d *cub3d);
+void			player_move_hooks(void *param);
+void			key_hooks(mlx_key_data_t keydata, void *param);
 
-// color.c
-uint32_t	pixels_to_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-t_color		get_color(t_cub3d *cub3d, int32_t x, int32_t y);
+//				draw.c
+void			cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
+void			draw_vert(t_cub3d *cub3d, t_line line);
+void			cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
+
+//				color.c
+t_color			get_pixel_color(t_cub3d *cub3d, int32_t x, int32_t y);
+
+//				drawing/textures.c
+int				get_tex_num(int side, int stepX, int stepY);
+void			tex_to_img(t_cub3d *cub3d, t_ray *ray, t_line *line, int32_t w);
 
 // time.c
 double	show_fps(t_cub3d *cub3d);

@@ -37,16 +37,16 @@ SRC			:=	main.c \
 				parsing/texture.c \
 				parsing/parse_map.c \
 				parsing/get_map_info.c \
-				drawing/test.c \
+				drawing/raycasting.c \
 				drawing/move.c \
 				drawing/init.c \
 				drawing/draw.c \
 				drawing/color.c \
 				drawing/time.c \
+				drawing/textures.c
 
 OBJ_DIR		:=	./obj
 MAIN_OBJ	:=	$(MAIN:src/%.c=$(OBJ_DIR)/%.o)
-# SRC			:=	test.c bresenham.c move.c init.c wu_line.c
 
 SRC     	:=	$(SRC:%=$(SRC_DIR)/%)
 # ODIR		:=	$(sort $(dir $(SRC:%=$(OBJ_DIR)/%)))

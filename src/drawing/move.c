@@ -17,27 +17,25 @@ void	player_move_hooks(void *param)
 	double		frametime;
 	float		moveSpeed;
 	float		rotSpeed;
-	float		strafeSpeed;
 
 	cub3d = (t_cub3d *)param;
 	player = &cub3d->player;
 	frametime = show_fps(cub3d);
 	moveSpeed = player->move_speed * frametime;
 	rotSpeed = player->rot_speed * frametime;
-	strafeSpeed = player->strafe_speed * frametime;
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_A))
 	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - (player->y_dir) * strafeSpeed)] == false)
-			player->x_pos -= (player->y_dir) * strafeSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos + (player->x_dir) * strafeSpeed)][(int)player->x_pos] == false)
-			player->y_pos += (player->x_dir) * strafeSpeed;
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos - player->x_plane * moveSpeed)] == false)
+			player->x_pos -= player->x_plane * moveSpeed;
+		if (cub3d->int_arr[(int)(player->y_pos - player->y_plane * moveSpeed)][(int)player->x_pos] == false)
+			player->y_pos -= player->y_plane * moveSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_D))
 	{
-		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + (player->y_dir) * strafeSpeed)] == false)
-			player->x_pos += (player->y_dir) * strafeSpeed;
-		if (cub3d->int_arr[(int)(player->y_pos - (player->x_dir) * strafeSpeed)][(int)player->x_pos] == false)
-			player->y_pos -= (player->x_dir) * strafeSpeed;
+		if (cub3d->int_arr[(int)player->y_pos][(int)(player->x_pos + player->x_plane * moveSpeed)] == false)
+			player->x_pos += player->x_plane * moveSpeed;
+		if (cub3d->int_arr[(int)(player->y_pos + player->y_plane * moveSpeed)][(int)player->x_pos] == false)
+			player->y_pos += player->y_plane * moveSpeed;
 	}
 	if (mlx_is_key_down(cub3d->mlx, MLX_KEY_W))
 	{
@@ -81,7 +79,6 @@ void	key_hooks(mlx_key_data_t keydata, void *param)
 	t_cub3d	*cub3d;
 
 	cub3d = (t_cub3d *)param;
-
 	if (keydata.action == MLX_PRESS)
 	{
 		if (keydata.key == MLX_KEY_F)
