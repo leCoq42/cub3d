@@ -18,7 +18,7 @@ void	clean_cub3d(t_cub3d *cub3d)
 		free(cub3d->map_str);
 	clean_textures(cub3d);
 	clean_char_arr(cub3d->char_arr);
-	clean_int_arr(cub3d->int_arr);
+	clean_int_arr(cub3d->int_arr, cub3d->map_height);
 	free(cub3d);
 }
 
@@ -49,14 +49,19 @@ void	clean_char_arr(char **arr)
 	free(arr);
 }
 
-void	clean_int_arr(int **arr)
+void	clean_int_arr(int **arr, int h)
 {
 	int	i;
 
 	i = 0;
 	if (!arr)
 		return ;
-	while (arr[i] != NULL)
+	if (!arr[0])
+	{
+		free(arr);
+		return ;
+	}
+	while (i < h)
 	{
 		free(arr[i]);
 		i++;

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include <sys/types.h>
 
 double	show_fps(t_cub3d *cub3d)
 {

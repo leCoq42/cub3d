@@ -70,7 +70,7 @@ bool	create_int_arr(t_cub3d *cub3d)
 	{
 		int_arr[i] = malloc(cub3d->map_width * sizeof(int));
 		if (!int_arr[i])
-			return (false);
+			return (clean_int_arr(int_arr, i), false);
 		i++;
 	}
 	cub3d->int_arr = int_arr;

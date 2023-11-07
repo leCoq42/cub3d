@@ -198,13 +198,13 @@ int				get_tex_num(int side, int stepX, int stepY);
 void			tex_to_img(t_cub3d *cub3d, t_ray *ray, t_line *line, int32_t w);
 
 // time.c
-double	show_fps(t_cub3d *cub3d);
+double			show_fps(t_cub3d *cub3d);
 
 // 				GET_MAP_INFO
 void			clean_cub3d(t_cub3d *cub3d);
 void			clean_textures(t_cub3d *cub3d);
 void			clean_char_arr(char **arr);
-void			clean_int_arr(int **arr);
+void			clean_int_arr(int **arr, int h);
 
 // 				MOUSE
 void			mouse_func_cb(double xpos, double ypos, void *param);

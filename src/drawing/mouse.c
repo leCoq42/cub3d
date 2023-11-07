@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "MLX42.h"
 #include "cub3d.h"
 
 void	mouse_func_cb(double xpos, double ypos, void *param)
