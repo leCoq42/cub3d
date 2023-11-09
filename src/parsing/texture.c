@@ -51,7 +51,7 @@ bool	check_path(t_cub3d *cub3d, char identifier, char *tex_path)
 	else if (identifier == 'W')
 		cub3d->textures[3] = texture;
 	else
-		return (false);
+		return (mlx_delete_texture(texture), false);
 	return (true);
 }
 

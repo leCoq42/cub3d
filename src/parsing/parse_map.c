@@ -54,7 +54,7 @@ bool	validate_values(char *str)
 	}
 	if (flag == 1)
 		return (true);
-	return (false);
+	return (perror("Error\nno start position"), false);
 }
 
 bool	create_int_arr(t_cub3d *cub3d)

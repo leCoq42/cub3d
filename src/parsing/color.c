@@ -14,9 +14,9 @@
 
 bool	get_color_header(char *file_str, t_cub3d *cub3d, char id, size_t *i)
 {
-	int		r;
-	int		g;
-	int		b;
+	int32_t		r;
+	int32_t		g;
+	int32_t		b;
 
 	r = get_r_g_b(file_str, i);
 	if (r == -1)
@@ -53,7 +53,7 @@ int	get_r_g_b(char *file_str, size_t *i)
 	return (color);
 }
 
-uint32_t	combine_rgb(int r, int g, int b)
+uint32_t	combine_rgb(uint32_t r, uint32_t g, uint32_t b)
 {
 	return (r << 24 | g << 16 | b << 8 | 0XFF);
 }

@@ -16,22 +16,28 @@ void	clean_cub3d(t_cub3d *cub3d)
 {
 	if (cub3d->map_str)
 		free(cub3d->map_str);
+	if (cub3d->img)
+		mlx_delete_image(cub3d->mlx, cub3d->img);
 	clean_textures(cub3d);
 	clean_char_arr(cub3d->char_arr);
 	clean_int_arr(cub3d->int_arr, cub3d->map_height);
+	if (cub3d->mlx)
+		mlx_close_window(cub3d->mlx);
+	if (cub3d->mlx)
+		mlx_terminate(cub3d->mlx);
 	free(cub3d);
 }
 
 void	clean_textures(t_cub3d *cub3d)
 {
-	int	i;
-
-	i = 0;
-	while (i < 4 && cub3d->textures[i] != NULL)
-	{
-		free(cub3d->textures[i]);
-		i++;
-	}
+	if (cub3d->textures[0])
+		mlx_delete_texture(cub3d->textures[0]);
+	if (cub3d->textures[1])
+		mlx_delete_texture(cub3d->textures[1]);
+	if (cub3d->textures[2])
+		mlx_delete_texture(cub3d->textures[2]);
+	if (cub3d->textures[3])
+		mlx_delete_texture(cub3d->textures[3]);
 }
 
 void	clean_char_arr(char **arr)

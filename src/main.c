@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "MLX42.h"
 #include "cub3d.h"
 
 int	main(int argc, char **argv)
@@ -24,16 +23,14 @@ int	main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	if (!init_cub3d(cub3d))
 		exit(EXIT_FAILURE);
-	cub3d_draw_image(cub3d, screenWidth, screenHeight);
+	cub3d_draw_image(cub3d, SCREENWIDTH, SCREENHEIGHT);
 	if (mlx_image_to_window(cub3d->mlx, cub3d->img, 0, 0) < 0)
 	{
-		mlx_terminate(cub3d->mlx);
 		clean_cub3d(cub3d);
 		exit(EXIT_FAILURE);
 	}
 	cub3d_hooks(cub3d);
 	mlx_loop(cub3d->mlx);
-	mlx_terminate(cub3d->mlx);
 	clean_cub3d(cub3d);
 	exit(EXIT_SUCCESS);
 }
