@@ -224,6 +224,6 @@ void			clean_int_arr(int **arr, int h);
 
 // 				MOUSE
 void			mouse_func_cb(double xpos, double ypos, void *param);
-void			rotate_mouse(int x_shift, t_player *player);
+void			rotate_mouse(int x_shift, t_player *player, double rot_speed);
 
 #endif
