@@ -1,16 +1,27 @@
-#include "MLX42.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 16:21:10 by mhaan             #+#    #+#             */
+/*   Updated: 2023/11/06 16:21:11 by mhaan            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 static void	init_view(t_player *player, t_point_cub st_pos);
 
 bool	init_cub3d(t_cub3d	*cub3d)
 {
-	cub3d->mlx = mlx_init(screenWidth, screenHeight, "cub3D", true);
+	cub3d->mlx = mlx_init(SCREENWIDTH, SCREENHEIGHT, "cub3D", true);
 	if (!cub3d->mlx)
-		return (false);
-	cub3d->img = mlx_new_image(cub3d->mlx, screenWidth, screenHeight);
+		return (clean_cub3d(cub3d), false);
+	cub3d->img = mlx_new_image(cub3d->mlx, SCREENWIDTH, SCREENHEIGHT);
 	if (!cub3d->img)
-		return (false);
+		return (clean_cub3d(cub3d), false);
 	init_player(&cub3d->player, cub3d->st_pos);
 	cub3d->bg_color = 0x00000000;
 	return (cub3d);

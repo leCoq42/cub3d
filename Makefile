@@ -70,13 +70,16 @@ debug:
 
 rebug: fclean
 	@rm -rf $(LIBMLX)/build/
-	cmake -DDEBUG=1 -DGLFW_FETCH=0 $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
 	$(MAKE) DEBUG=1
 
 fsan:
 	$(MAKE) FSAN=1
 
-resan: fclean fsan
+resan: fclean
+	@rm -rf $(LIBMLX)/build/
+	cmake $(LIBMLX) -B $(LIBMLX)/build && cmake --build $(LIBMLX)/build -j
+	$(MAKE) FSAN=1
 
 libinit:
 	git submodule update --remote --init --recursive

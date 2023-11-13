@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 16:21:04 by mhaan             #+#    #+#             */
+/*   Updated: 2023/11/06 16:21:06 by mhaan            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
-void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
+void	cub3d_draw_image(t_cub3d *cub3d, int32_t screen_w, int32_t screen_h)
 {
 	mlx_image_t	*img;
 	int32_t		bg_color;
@@ -8,12 +20,12 @@ void	cub3d_draw_image(t_cub3d *cub3d, int32_t w, int32_t h)
 
 	img = cub3d->img;
 	bg_color = cub3d->bg_color;
-	ft_memset(img->pixels, bg_color, w * h * 4);
-	cast_floor_ceiling(cub3d, w, h);
+	ft_memset(img->pixels, bg_color, screen_w * screen_h * 4);
+	cast_floor_ceiling(cub3d, screen_w, screen_h);
 	x = 0;
-	while (x < w)
+	while (x < screen_w)
 	{
-		cast_walls(cub3d, w, h, x);
+		cast_walls(cub3d, screen_w, screen_h, x);
 		x++;
 	}
 }

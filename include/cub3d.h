@@ -1,32 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaan <mhaan@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/09 13:12:44 by mhaan             #+#    #+#             */
+/*   Updated: 2023/11/09 13:13:41 by mhaan            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <limits.h>
-#include <math.h>
-#include <fcntl.h>
-#include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdint.h>
+# include <limits.h>
+# include <math.h>
+# include <fcntl.h>
+# include <stdio.h>
 
-#include "MLX42.h"
-#include "libft.h"
-#include "ft_printf.h"
-#include "get_next_line_bonus.h"
+# include "MLX42.h"
+# include "libft.h"
+# include "ft_printf.h"
+# include "get_next_line_bonus.h"
 
-#define screenWidth 1920
-#define screenHeight 1080
-#define mapWidth 24
-#define mapHeight 24
-#define texWidth 64
-#define texHeight 64
-#define FONT_WIDTH 90
-#define FONT_HEIGHT 90
+# define SCREENWIDTH 1920
+# define SCREENHEIGHT 1080
+# define FONT_WIDTH 90
+# define FONT_HEIGHT 90
 
-#define NORTH 0
-#define EAST 1
-#define SOUTH 2
-#define WEST 3
+# define NORTH 0
+# define EAST 1
+# define SOUTH 2
+# define WEST 3
 
 //***********************************STRUCTS***********************************
 
@@ -122,9 +130,9 @@ typedef struct s_cub3d
 	double			mouse_x;
 }	t_cub3d;
 
-//***********************************PROTOTYPES***********************************
+//***********************************PROTOTYPES********************************
 // 				PARSE
-t_cub3d 		*parse_file(char *filename);
+t_cub3d			*parse_file(char *filename);
 
 // 				PARSING_UTILS
 int				check_filename(char *map_name);
@@ -134,16 +142,18 @@ char			*strjoin_free(char *s1, char *s2);
 
 // 				PARSE_HEADER
 bool			parse_header(int fd, t_cub3d *cub3d);
-char 			*file_to_str(int fd);
+char			*file_to_str(int fd);
 bool			is_identifier(char *str);
 bool			extract_info(char *str, size_t *i, t_cub3d *cub3d);
 bool			info_is_valid(t_cub3d *cub3d, size_t *i, char *file_str);
 
 // 				COLOR
-bool			get_color_header(char *file_str, t_cub3d *cub3d, char c, size_t *i);
+bool			get_color_header(char *file_str, t_cub3d *cub3d,
+					char c, size_t *i);
 int				get_r_g_b(char *file_str, size_t *i);
-uint32_t		combine_rgb(int r, int g, int b);
-void			set_pixel_color(t_cub3d *cub3d, t_color color, uint32_t img_idx);
+uint32_t		combine_rgb(uint32_t r, uint32_t g, uint32_t b);
+void			set_pixel_color(t_cub3d *cub3d, t_color color,
+					uint32_t img_idx);
 
 // 				TEXTURE
 bool			get_texture(char *file_str, t_cub3d *cub3d, char c, size_t *i);
@@ -158,10 +168,12 @@ bool			fill_int_arr(t_cub3d *cub3d);
 
 // 				GET_MAP_INFO
 bool			get_dimensions(char **arr, t_cub3d *cub3d);
-// void 			print_char_array(char **arr);
-// void 			print_int_array(int **arr, size_t h, size_t w);
-int				flood_fill_check(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar);
-int				flood_fill_repair(t_cub3d *cub3d, size_t pos_x, size_t pos_y, char tar);
+// void			print_char_array(char **arr);
+// void			print_int_array(int **arr, size_t h, size_t w);
+int				flood_fill_check(t_cub3d *cub3d, size_t pos_x,
+					size_t pos_y, char tar);
+int				flood_fill_repair(t_cub3d *cub3d, size_t pos_x,
+					size_t pos_y, char tar);
 
 //				raycasting.c
 void			cast_floor_ceiling(t_cub3d *cub3d, int32_t w, int32_t h);
@@ -174,8 +186,10 @@ int				init_textures(mlx_texture_t **textures);
 t_ray			init_ray(t_player player, int x, int w);
 
 //				move.c
-void			move_straight(t_player *player, int **map, double move_speed, bool fwd);
-void			move_strafe(t_player *player, int **map, double move_speed, bool right);
+void			move_straight(t_player *player, int **map,
+					double move_speed, bool fwd);
+void			move_strafe(t_player *player, int **map,
+					double move_speed, bool right);
 void			move_rotate(t_player *player, double rot_spd, bool right);
 
 //				hooks.c
@@ -186,9 +200,11 @@ void			resize_func_cb(int32_t width, int32_t height, void *param);
 void			close_mlx(void *param);
 
 //				draw.c
-void			cub3d_draw_image(t_cub3d *cub3d, int32_t mapwidth, int32_t mapheight);
+void			cub3d_draw_image(t_cub3d *cub3d, int32_t screen_w,
+					int32_t screen_h);
 void			draw_vert(t_cub3d *cub3d, t_line line);
-void			cub3d_put_pixel(mlx_image_t *img, int32_t x, int32_t y, t_color c);
+void			cub3d_put_pixel(mlx_image_t *img, int32_t x,
+					int32_t y, t_color c);
 
 //				color.c
 t_color			get_pixel_color(t_cub3d *cub3d, int32_t x, int32_t y);
@@ -198,16 +214,16 @@ int				get_tex_num(int side, int stepX, int stepY);
 void			tex_to_img(t_cub3d *cub3d, t_ray *ray, t_line *line, int32_t w);
 
 // time.c
-double	show_fps(t_cub3d *cub3d);
+double			show_fps(t_cub3d *cub3d);
 
 // 				GET_MAP_INFO
 void			clean_cub3d(t_cub3d *cub3d);
 void			clean_textures(t_cub3d *cub3d);
 void			clean_char_arr(char **arr);
-void			clean_int_arr(int **arr);
+void			clean_int_arr(int **arr, int h);
 
 // 				MOUSE
 void			mouse_func_cb(double xpos, double ypos, void *param);
-void			rotate_mouse(int x_shift, t_player *player);
+void			rotate_mouse(int x_shift, t_player *player, double rot_speed);
 
 #endif

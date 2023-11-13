@@ -1,8 +1,8 @@
 
-EA ./pictures/candy_land/unicorn.png
-WE ./pictures/candy_land/donut.png
-NO ./pictures/candy_land/ice_cream.png
-SO ./pictures/candy_land/lollipop.png
+EA ./textures/pics/greystone.png
+WE ./textures/pics/bluestone.png
+NO ./textures/pics/colorstone.png
+SO ./textures/pics/eagle.png
 F 255, 105, 180
 C 225, 0, 127
 

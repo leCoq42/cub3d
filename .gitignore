@@ -1,6 +1,8 @@
 # random
 compile_commands.json
 .cache/*
+test_maps/*
+.vscode
 
 # Prerequisites
 *.d

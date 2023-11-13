@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_map.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vbrouwer <vbrouwer@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 16:20:41 by mhaan             #+#    #+#             */
+/*   Updated: 2023/11/06 16:49:07 by vbrouwer         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 bool	parse_map(t_cub3d *cub3d)
@@ -38,11 +50,11 @@ bool	validate_values(char *str)
 		else if (str[i] == '\0')
 			break ;
 		else
-			return (perror("Error\ninvalid start position"), false);
+			return (perror("Error\ninvalid map"), false);
 	}
 	if (flag == 1)
 		return (true);
-	return (false);
+	return (perror("Error\nno start position"), false);
 }
 
 bool	create_int_arr(t_cub3d *cub3d)
@@ -58,7 +70,7 @@ bool	create_int_arr(t_cub3d *cub3d)
 	{
 		int_arr[i] = malloc(cub3d->map_width * sizeof(int));
 		if (!int_arr[i])
-			return (false);
+			return (clean_int_arr(int_arr, i), false);
 		i++;
 	}
 	cub3d->int_arr = int_arr;
